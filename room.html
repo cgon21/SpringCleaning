@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        let backgroundImage;
+        let sodaPile;
+        let laundryPile;
+        let dust = [];
+        let num = 4;
+
+        // Preload all images
+        function preload() {
+            backgroundImage = loadImage('sprites/room/room.png');
+            sodaPile = loadImage('sprites/room/sodaPile.png');
+            laundryPile = loadImage('sprites/room/laundryPile.png');
+            for (let i = 0; i < num; i++) {
+                dust.push(loadImage('sprites/room/dust.png'));
+            }
+        }
+
+        function setup() {
+            canvas = createCanvas(backgroundImage.width, backgroundImage.height);
+            let canvasX = (windowWidth - backgroundImage.width) / 2;
+            let canvasY = (windowHeight - backgroundImage.height) / 2;
+            canvas.position(canvasX, canvasY);
+
+            mouseX = windowWidth / 2;
+            mouseY = windowHeight / 2;
+        }
+
+        function windowResized() {
+            let canvasX = (windowWidth - backgroundImage.width) / 2;
+            let canvasY = (windowHeight - backgroundImage.height) / 2;
+            canvas.position(canvasX, canvasY);
+        }
+
+        function draw() {
+            background(backgroundImage); // set the background every frame
+            image(sodaPile, canvas.width / 2 + 340, canvas.height / 2 + 120, sodaPile.width / 2.8, sodaPile.height / 2.8);
+            image(laundryPile, canvas.width / 2 - 400, canvas.height / 2 - 80, laundryPile.width / 2, laundryPile.height / 2);
+            for (let i = 0; i < num; i++) {
+                image(dust[i], canvas.width / 2 - 750, canvas.height / 2 - 280 + 135 * i, dust[i].width / 5, dust[i].height / 9);
+            }
+        }
+
+    </script>
+</body>
+
+</html>
