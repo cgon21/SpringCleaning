@@ -21,6 +21,7 @@
 <body>
     <script>
         let backgroundImage;
+        let duster;
         let sodaPile;
         let laundryPile;
         let dust = [];
@@ -29,6 +30,7 @@
         // Preload all images
         function preload() {
             backgroundImage = loadImage('sprites/room/room.png');
+            duster = loadImage('sprites/room/dusterIRL.png');
             sodaPile = loadImage('sprites/room/sodaPile.png');
             laundryPile = loadImage('sprites/room/laundryPile.png');
             for (let i = 0; i < num; i++) {
@@ -54,11 +56,30 @@
 
         function draw() {
             background(backgroundImage); // set the background every frame
+
+            // Rotate and draw the duster
+            push(); // Start a new drawing state
+            translate(canvas.width / 2 + 680, canvas.height / 2 + 180); // Move the origin to the desired location of the duster
+            rotate(PI * 1.1); // Rotate by PI/8 radians (about 22.5 degrees)
+            image(duster, -duster.width / 8, -duster.height / 8, duster.width / 4, duster.height / 4); // Draw the image centered on the new origin
+            pop(); // Restore original state
+
             image(sodaPile, canvas.width / 2 + 340, canvas.height / 2 + 120, sodaPile.width / 2.8, sodaPile.height / 2.8);
             image(laundryPile, canvas.width / 2 - 400, canvas.height / 2 - 80, laundryPile.width / 2, laundryPile.height / 2);
             for (let i = 0; i < num; i++) {
-                image(dust[i], canvas.width / 2 - 750, canvas.height / 2 - 280 + 135 * i, dust[i].width / 5, dust[i].height / 9);
+                image(dust[i], 0, 180 + 138 * i, 220, 125);
             }
+
+
+        }
+
+        function mouseClicked() {
+            if (mouseX >= 0 && mouseX <= 220 &&
+                mouseY >= (180) && mouseY <= 180 + 138 * 3 + 125 / 2) {
+                window.location.href = 'dust.html';
+                return;
+            }
+
         }
 
     </script>
