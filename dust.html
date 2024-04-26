@@ -23,12 +23,19 @@
         let backgroundImage;
         let dustBunnyImages = [];
         let dustBunnies = [];
-        let roomba;
-        const num = 50; // using gifs - so it can't handle too large of a num!
+
+        let duster;
+        let dusterAngle = 0;
+        let dusterAngleDirection = 1;
+        let dusterMaxAngle = 0.3; // max angle for fanning motion
+        let dusterAngleSpeed = 0.03; // speed of angle change
+
+        const num = 50;
         const noiseScale = 0.01;
         let radius;
         let bunnySize;
-        let roombaSize;
+        let dusterSize;
+        let dusterDir = 1;
 
         // Preload all images
         function preload() {
@@ -36,7 +43,7 @@
             for (let i = 0; i < num; i++) {
                 dustBunnyImages.push(loadImage("sprites/enemies/dustBunny.png"));
             }
-            roomba = loadImage("sprites/room/dusterIRL.png");
+            duster = loadImage("sprites/room/dusterIRL.png");
         }
 
         // setup the vectors of each bunny in the window
@@ -44,18 +51,28 @@
         // and radius of suck according to the size of the window
         function setup() {
             frameRate(60);
-            createCanvas(windowWidth, windowHeight);
+            canvas = createCanvas(backgroundImage.width, backgroundImage.height);
+            let canvasX = (windowWidth - backgroundImage.width) / 2;
+            let canvasY = (windowHeight - backgroundImage.height) / 2;
+            canvas.position(canvasX, canvasY);
+
             for (let i = 0; i < num; i++) {
                 dustBunnies.push(createVector(random(width), random(height)));
             }
             stroke(0, 128, 128);
             noiseSeed(1);
-            bunnySize = Math.min(windowHeight / 8, windowWidth / 8);
-            roombaSize = Math.min(windowHeight / 6, windowWidth / 6);
-            radius = Math.min(windowHeight / 3, windowWidth / 3);
+            bunnySize = 150;
+            dusterSize = 200;
+            radius = 350;
 
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
+        }
+
+        function windowResized() {
+            let canvasX = (windowWidth - backgroundImage.width) / 2;
+            let canvasY = (windowHeight - backgroundImage.height) / 2;
+            canvas.position(canvasX, canvasY);
         }
 
         function draw() {
@@ -63,78 +80,112 @@
 
             // makes the screen look dirty until all dust bunnies are sucked up
             fill(100, 50, 0, 150 * dustBunnies.length / num);
-            rect(0, 0, windowWidth, windowHeight);
+            rect(0, 0, canvas.width, canvas.height);
 
-            // once every dust bunny has been sucked up, display text to say,
-            // "All clean!" as well as a defeated and sad dust bunny
+            // once every dust bunny has been sucked up, display text to say, "All clean!"
             if (dustBunnies.length < 1) {
-                fill(0);
-                textSize(Math.min(windowWidth / 9, windowHeight / 9));
-                textAlign(CENTER, CENTER);
-                textFont('Papyrus');
-                text("All Clean!", windowWidth / 2 + 5, windowHeight * (4 / 5));
-                text("All Clean!", windowWidth / 2 - 5, windowHeight * (4 / 5));
+                push();
+                rotate(45);
+                imageMode(CENTER);
+                image(duster, backgroundImage.width / 2 + 100, backgroundImage.height / 2 - 950);
+                pop();
 
-                textSize(Math.min(windowWidth / 9, windowHeight / 9));
+                sizeOfText = 180;
+                textSize(sizeOfText);
+                textStyle(BOLD);
+                textAlign(CENTER);
+                textFont('Papyrus');
+                fill(0);
+                text("All Clean!", backgroundImage.width / 2 + 10, backgroundImage.height / 2);
+                text("All Clean!", backgroundImage.width / 2 - 10, backgroundImage.height / 2);
+
                 fill(255);
-                text("All Clean!", windowWidth / 2, windowHeight * 4 / 5);
-            } else {
-                // for loop to set path of dust bunnies using perlin noise
+                text("All Clean!", backgroundImage.width / 2, backgroundImage.height / 2);
+                document.getElementById("backButton").style.display = "block";
+            } else if (mouseIsPressed) {
                 for (let i = dustBunnies.length - 1; i >= 0; i--) {
                     let bunny = dustBunnies[i];
                     let bunnyImage = dustBunnyImages[i];
                     let n = noise(bunny.x * noiseScale, bunny.y * noiseScale);
                     let a = TAU * n;
-
-                    // check for mouse click and for whether the current bunny
-                    // is close enough to be sucked by the roomba
-                    if (mouseIsPressed && (dist(bunny.x, bunny.y, mouseX, mouseY) < radius)) {
-                        // make the bunny go towards the roomba
+                    // bunny in range
+                    if (dist(bunny.x, bunny.y, mouseX, mouseY - 300) <= radius) {
+                        // make the bunny go away from the duster
                         let directionX = mouseX - bunny.x;
                         let directionY = mouseY - bunny.y;
-                        bunny.x += directionX / 100;
-                        bunny.y += directionY / 100;
+                        bunny.x -= directionX / 70;
+                        bunny.y -= directionY / 70;
 
-                        // remove bunny if it gets too close to the roomba
-                        if (dist(bunny.x, bunny.y, mouseX, mouseY) < roombaSize) {
-                            dustBunnies.splice(i, 1);
-                        }
-
+                        // spin the bunnies
                         push();
                         translate(bunny.x, bunny.y);
-
-                        // if the bunny is to the right of the roomba,
-                        // flip the image so it looks like the bunny is trying to run away
-                        if (mouseX < bunny.x) {
-                            scale(-1, 1);
-                        }
-
-                        rotate(random(-.2, .2)); // make the bunny shake as if it is struggling to escape the roomba
+                        rotate(frameCount * .15);
                         image(bunnyImage, -bunnySize / 2, -bunnySize / 2, bunnySize, bunnySize);
                         pop();
                     }
-                    // if the mouse is not clicked/held - the bunnies follow their perlin noise path
-                    else {
-                        bunny.x += cos(a);
-                        bunny.y += sin(a);
-                        image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
+                    // bunny just outside of range
+                    else if (dist(bunny.x, bunny.y, mouseX, mouseY - 300) < radius + 5) {
+                        // spin the bunnies
+                        push();
+                        translate(bunny.x, bunny.y);
+                        rotate(frameCount * .15);
+                        image(bunnyImage, -bunnySize / 2, -bunnySize / 2, bunnySize, bunnySize);
+                        pop();
 
                     }
+                    // bunny out of range
+                    else {
+                        // Go towards center
+                        let directionX = (width / 2 - bunny.x) / 300;
+                        let directionY = (height / 2 - bunny.y) / 300;
+                        bunny.x += directionX;
+                        bunny.y += directionY;
+                        image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
+                    }
+                    // Check if the bunny has moved out of frame
+                    if (!onScreen(bunny)) {
+                        dustBunnies.splice(i, 1); // Remove the bunny if it's off the screen
+                    }
+                }
+                // Duster dusts
+                dusterAngle += dusterAngleDirection * dusterAngleSpeed; // calculate angle to rotate
+                if (abs(dusterAngle) > dusterMaxAngle) { // if angle is too great, flip the direction
+                    dusterAngleDirection *= -1;
+                }
+                push();
+                translate(mouseX, mouseY + dusterSize * 1.75 - 100); // Adjusting the pivot point to the bottom
+                rotate(dusterAngle);
+                image(duster, -dusterSize / 3.5 - 60, -dusterSize * 3.5 - 160, dusterSize * 1.7, dusterSize * 3.5); // Position image relative to the new pivot
+                pop();
+            }
+            else {
+                // Mouse not being clicked/held
+                for (let i = dustBunnies.length - 1; i >= 0; i--) {
+                    let bunny = dustBunnies[i];
+                    let bunnyImage = dustBunnyImages[i];
+                    let n = noise(bunny.x * noiseScale, bunny.y * noiseScale);
+                    let a = TAU * n;
+                    let safe;
 
-                    // check if a bunny goes off screen - it will respawn somewhere random within the window
+                    // bunny follows path
+                    bunny.x += cos(a);
+                    bunny.y += sin(a);
+
+                    image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
+                    image(duster, mouseX - dusterSize * 1.7 / 2, mouseY - dusterSize * 3.5 + 100, dusterSize * 1.7, dusterSize * 3.5);
+
+                    // If bunny goes off screen, respawn at a random spot
                     if (!onScreen(bunny)) {
                         bunny.x = random(width);
                         bunny.y = random(height);
                     }
                 }
-                // draw the roomba at the current location of the mouse
-                image(roomba, mouseX - roombaSize * 3 / 2, mouseY - roombaSize, roombaSize * 3, roombaSize * 2);
             }
         }
 
-        // confirms whether a bunny is on/off screen
-        function onScreen(v) {
-            if (v.x >= -bunnySize && v.x <= width + bunnySize && v.y >= 0 && v.y <= height) {
+        // Check if bunny is still on screen
+        function onScreen(bunny) {
+            if (bunny.x >= -bunnySize && bunny.x <= width + bunnySize && bunny.y >= 0 && bunny.y <= height) {
                 return true;
             } else {
                 return false;
