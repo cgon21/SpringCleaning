@@ -15,10 +15,32 @@
         canvas {
             display: block;
         }
+
+        #returnButton {
+            display: none;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, 50px);
+            padding: 25px 50px;
+            font-size: 40px;
+            color: white;
+            background-color: black;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 1000;
+            /* Make sure it's on top of other elements */
+        }
+
+        #returnButton:hover {
+            background-color: pink;
+        }
     </style>
 </head>
 
 <body>
+    <button id="returnButton">Return to Room</button>
     <script>
         let backgroundImage;
         let dustBunnyImages = [];
@@ -67,12 +89,23 @@
 
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
+
+            updateButtonPosition();
         }
 
         function windowResized() {
             let canvasX = (windowWidth - backgroundImage.width) / 2;
             let canvasY = (windowHeight - backgroundImage.height) / 2;
             canvas.position(canvasX, canvasY);
+            updateButtonPosition();
+        }
+
+        function updateButtonPosition() {
+            let canvasX = (windowWidth - backgroundImage.width) / 2;
+            let canvasY = (windowHeight - backgroundImage.height) / 2;
+            let button = document.getElementById('returnButton');
+            button.style.left = `${canvasX + backgroundImage.width / 2}px`;
+            button.style.top = `${canvasY + backgroundImage.height / 2 + 230}px`; // 50px offset for visual adjustment
         }
 
         function draw() {
@@ -101,8 +134,11 @@
 
                 fill(255);
                 text("All Clean!", backgroundImage.width / 2, backgroundImage.height / 2);
-                document.getElementById("backButton").style.display = "block";
+
+                document.getElementById("returnButton").style.display = "block";
+
             } else if (mouseIsPressed) {
+                document.getElementById("returnButton").style.display = "none";
                 for (let i = dustBunnies.length - 1; i >= 0; i--) {
                     let bunny = dustBunnies[i];
                     let bunnyImage = dustBunnyImages[i];
@@ -159,6 +195,7 @@
                 pop();
             }
             else {
+                document.getElementById("returnButton").style.display = "none";
                 // Mouse not being clicked/held
                 for (let i = dustBunnies.length - 1; i >= 0; i--) {
                     let bunny = dustBunnies[i];
@@ -191,6 +228,14 @@
                 return false;
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var returnButton = document.getElementById('returnButton');
+            returnButton.addEventListener('click', function () {
+                window.location.href = 'room.html';
+            });
+        });
+
     </script>
 </body>
 
