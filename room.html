@@ -21,11 +21,10 @@
 <body>
     <script>
         let backgroundImage;
-        let duster;
-        let sodaPile;
-        let laundryPile;
+        let duster, sodaPile, laundryPile;
         let dust = [];
         let num = 4;
+        let scaleFactor = 1;
 
         // Preload all images
         function preload() {
@@ -39,49 +38,67 @@
         }
 
         function setup() {
-            canvas = createCanvas(backgroundImage.width, backgroundImage.height);
-            let canvasX = (windowWidth - backgroundImage.width) / 2;
-            let canvasY = (windowHeight - backgroundImage.height) / 2;
-            canvas.position(canvasX, canvasY);
-
-            mouseX = windowWidth / 2;
-            mouseY = windowHeight / 2;
+            updateScaleFactor();
+            canvas = createCanvas(backgroundImage.width * scaleFactor, backgroundImage.height * scaleFactor);
+            updateCanvasPosition();
         }
 
         function windowResized() {
-            let canvasX = (windowWidth - backgroundImage.width) / 2;
-            let canvasY = (windowHeight - backgroundImage.height) / 2;
+            updateScaleFactor();
+            resizeCanvas(backgroundImage.width * scaleFactor, backgroundImage.height * scaleFactor);
+            updateCanvasPosition();
+        }
+
+        function updateScaleFactor() {
+            let windowRatio = windowWidth / windowHeight;
+            let imageRatio = backgroundImage.width / backgroundImage.height;
+            if (windowRatio > imageRatio) {
+                scaleFactor = windowHeight / backgroundImage.height;
+            } else {
+                scaleFactor = windowWidth / backgroundImage.width;
+            }
+        }
+
+        function updateCanvasPosition() {
+            let canvasX = (windowWidth - width) / 2;
+            let canvasY = (windowHeight - height) / 2;
             canvas.position(canvasX, canvasY);
         }
 
         function draw() {
+            clear();
             background(backgroundImage); // set the background every frame
 
-            // Rotate and draw the duster
-            push(); // Start a new drawing state
-            translate(canvas.width / 2 + 680, canvas.height / 2 + 180); // Move the origin to the desired location of the duster
-            rotate(PI * 1.1); // Rotate by PI/8 radians (about 22.5 degrees)
-            image(duster, -duster.width / 8, -duster.height / 8, duster.width / 4, duster.height / 4); // Draw the image centered on the new origin
-            pop(); // Restore original state
+            // Transformations and drawing scaled images
+            push();
+            translate((backgroundImage.width * scaleFactor) / 2 + 680 * scaleFactor, (backgroundImage.height * scaleFactor) / 2 + 180 * scaleFactor);
+            rotate(PI * 1.1);
+            image(duster, -duster.width / 8 * scaleFactor, -duster.height / 8 * scaleFactor, duster.width / 4 * scaleFactor, duster.height / 4 * scaleFactor);
+            pop();
 
-            image(sodaPile, canvas.width / 2 + 340, canvas.height / 2 + 120, sodaPile.width / 2.8, sodaPile.height / 2.8);
-            image(laundryPile, canvas.width / 2 - 400, canvas.height / 2 - 80, laundryPile.width / 2, laundryPile.height / 2);
+            image(sodaPile, (backgroundImage.width * scaleFactor) / 2 + 340 * scaleFactor, (backgroundImage.height * scaleFactor) / 2 + 120 * scaleFactor, sodaPile.width / 2.8 * scaleFactor, sodaPile.height / 2.8 * scaleFactor);
+            image(laundryPile, (backgroundImage.width * scaleFactor) / 2 - 400 * scaleFactor, (backgroundImage.height * scaleFactor) / 2 - 80 * scaleFactor, laundryPile.width / 2 * scaleFactor, laundryPile.height / 2 * scaleFactor);
             for (let i = 0; i < num; i++) {
-                image(dust[i], 0, 180 + 138 * i, 220, 125);
+                image(dust[i], 0, 180 * scaleFactor + 138 * i * scaleFactor, 220 * scaleFactor, 125 * scaleFactor);
             }
-
-
         }
 
+        // Update clickable areas or interactions based on scale
         function mouseClicked() {
-            if (mouseX >= 0 && mouseX <= 220 &&
-                mouseY >= (180) && mouseY <= 180 + 138 * 3 + 125 / 2) {
-                window.location.href = 'dust.html';
-                return;
+            // Check for click on the dust piles
+            let dustWidth = 220 * scaleFactor;
+            let dustHeight = 125 * scaleFactor;
+            let dustStartY = 180 * scaleFactor;
+            let dustSpacing = 138 * scaleFactor;
+
+            for (let i = 0; i < num; i++) {
+                let pileY = dustStartY + i * dustSpacing;
+                if (mouseX >= 0 && mouseX <= dustWidth && mouseY >= pileY && mouseY <= pileY + dustHeight) {
+                    window.location.href = 'dust.html';
+                    return;
+                }
             }
-
         }
-
     </script>
 </body>
 
