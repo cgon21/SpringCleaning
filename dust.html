@@ -18,19 +18,18 @@
 
         #returnButton {
             display: none;
-            position: absolute;
-            top: 70%;
+            position: fixed;
+            top: 80%;
             left: 50%;
-            transform: translate(-50%, 50px);
-            padding: 25px 50px;
-            font-size: 40px;
+            transform: translate(-50%);
+            padding: 2vh;
+            font-size: 5vh;
             color: white;
             background-color: black;
             border: none;
-            border-radius: 20px;
+            border-radius: 3vh;
             cursor: pointer;
             z-index: 1000;
-            /* Make sure it's on top of other elements */
         }
 
         #returnButton:hover {
@@ -54,7 +53,7 @@
         let dusterMaxAngle = 0.3; // max angle for fanning motion
         let dusterAngleSpeed = 0.03; // speed of angle change
 
-        const num = 10;
+        const num = 40;
         let noiseScale = 0.01;
         let radius;
         let bunnySize;
@@ -100,8 +99,6 @@
 
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
-
-            updateButtonPosition();
         }
 
         function windowResized() {
@@ -117,16 +114,6 @@
             bunnySize = 150 * scale;
             dusterSize = 200 * scale;
             radius = 350 * scale;
-
-            updateButtonPosition();
-        }
-
-        function updateButtonPosition() {
-            let canvasX = (windowWidth / 2) - (shelf.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (shelf.height / 2) * scale;
-            let button = document.getElementById('returnButton');
-            button.style.left = `${canvasX + shelf.width / 2 * scale}px`;
-            button.style.top = `${canvasY + shelf.height / 2 + 230 * scale}px`;
         }
 
         function draw() {
