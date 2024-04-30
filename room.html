@@ -25,10 +25,19 @@
             localStorage.setItem('dusterCheck', '0');
         }
         dusterCheck = localStorage.getItem('dusterCheck');
+
+        let hamperCheck;
+        if (hamperCheck === null) {
+            localStorage.setItem('hamperCheck', '0');
+        }
+        hamperCheck = localStorage.getItem('hamperCheck');
+
+        // Reset
+        // localStorage.setItem('hamperCheck', '0');
         // localStorage.setItem('dusterCheck', '0');
 
         let room;
-        let duster, sodaPile, laundryPile;
+        let duster, sodaPile, laundryPile, hamper;
         let dust = [];
         let num = 4;
         let refScale;
@@ -37,6 +46,7 @@
         function preload() {
             room = loadImage('sprites/room/room.png');
             duster = loadImage('sprites/room/dusterIRL.png');
+            hamper = loadImage('sprites/room/hamperIRL.png');
             sodaPile = loadImage('sprites/room/sodaPile.png');
             laundryPile = loadImage('sprites/room/laundryPile.png');
             for (let i = 0; i < num; i++) {
@@ -81,6 +91,7 @@
 
             image(sodaPile, width - 550 * refScale, height - 340 * refScale, sodaPile.width / 3.5 * refScale, sodaPile.height / 3.5 * refScale);
             image(laundryPile, 450 * refScale, height - 400 * refScale, laundryPile.width / 2.7 * refScale, laundryPile.height / 2.7 * refScale);
+            image(hamper, 50 * refScale, height - 210 * refScale, hamper.width / 2.4 * refScale, hamper.height / 2.4 * refScale);
 
             for (let i = 0; i < num; i++) {
                 image(dust[i], -5, 150 * refScale + i * 135 * refScale, dust[i].width / 4.4 * refScale, dust[i].height / 3 * refScale);
@@ -90,7 +101,6 @@
         // Update clickable areas or interactions based on scale
         function mouseClicked() {
             if (dusterCheck != '2') {
-
                 dustLeft = 0;
                 dustRight = dust[0].width / 4.4 * refScale;
                 dustTop = 150 * refScale;
@@ -108,6 +118,16 @@
                 dusterBottom = height - 400 * refScale + 280 * refScale;
                 if (mouseX >= dusterLeft && mouseX <= dusterRight && mouseY >= dusterTop && mouseY <= dusterBottom) {
                     window.location.href = 'duster.html';
+                }
+            }
+
+            if (hamperCheck === '0') {
+                hamperLeft = 50 * refScale;
+                hamperRight = 50 * refScale + hamper.width / 2.4 * refScale;
+                hamperTop = height - 210 * refScale;
+                hamperBottom = height;
+                if (mouseX >= hamperLeft && mouseX <= hamperRight && mouseY >= hamperTop && mouseY <= hamperBottom) {
+                    window.location.href = 'hamper.html';
                 }
             }
         }
