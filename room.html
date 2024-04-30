@@ -20,15 +20,15 @@
 
 <body>
     <script>
-        let backgroundImage;
+        let room;
         let duster, sodaPile, laundryPile;
         let dust = [];
         let num = 4;
-        let scaleFactor = 1;
+        let refScale;
 
         // Preload all images
         function preload() {
-            backgroundImage = loadImage('sprites/room/room.png');
+            room = loadImage('sprites/room/room.png');
             duster = loadImage('sprites/room/dusterIRL.png');
             sodaPile = loadImage('sprites/room/sodaPile.png');
             laundryPile = loadImage('sprites/room/laundryPile.png');
@@ -38,65 +38,65 @@
         }
 
         function setup() {
-            updateScaleFactor();
-            canvas = createCanvas(backgroundImage.width * scaleFactor, backgroundImage.height * scaleFactor);
-            updateCanvasPosition();
+            refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
+
+            let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+            width = room.width * refScale;
+            height = room.height * refScale;
+
+            canvas = createCanvas(width, height);
+            canvas.position(canvasX, canvasY);
         }
 
         function windowResized() {
-            updateScaleFactor();
-            resizeCanvas(backgroundImage.width * scaleFactor, backgroundImage.height * scaleFactor);
-            updateCanvasPosition();
-        }
+            refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
+            let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+            width = room.width * refScale;
+            height = room.height * refScale;
 
-        function updateScaleFactor() {
-            let windowRatio = windowWidth / windowHeight;
-            let imageRatio = backgroundImage.width / backgroundImage.height;
-            if (windowRatio > imageRatio) {
-                scaleFactor = windowHeight / backgroundImage.height;
-            } else {
-                scaleFactor = windowWidth / backgroundImage.width;
-            }
-        }
-
-        function updateCanvasPosition() {
-            let canvasX = (windowWidth - width) / 2;
-            let canvasY = (windowHeight - height) / 2;
+            resizeCanvas(width, height);
             canvas.position(canvasX, canvasY);
         }
 
         function draw() {
             clear();
-            background(backgroundImage); // set the background every frame
+            background(room); // set the background every frame
 
             // Transformations and drawing scaled images
             push();
-            translate((backgroundImage.width * scaleFactor) / 2 + 680 * scaleFactor, (backgroundImage.height * scaleFactor) / 2 + 180 * scaleFactor);
+            translate(width / 2 + 680 * refScale, height / 2 + 180 * refScale);
             rotate(PI * 1.1);
-            image(duster, -duster.width / 8 * scaleFactor, -duster.height / 8 * scaleFactor, duster.width / 4 * scaleFactor, duster.height / 4 * scaleFactor);
+            image(duster, -90 * refScale, -170 * refScale, duster.width / 3.4 * refScale, duster.height / 3.4 * refScale);
             pop();
+            // square(width - refScale * 150, height - 700 * refScale, 150 * refScale);
 
-            image(sodaPile, (backgroundImage.width * scaleFactor) / 2 + 340 * scaleFactor, (backgroundImage.height * scaleFactor) / 2 + 120 * scaleFactor, sodaPile.width / 2.8 * scaleFactor, sodaPile.height / 2.8 * scaleFactor);
-            image(laundryPile, (backgroundImage.width * scaleFactor) / 2 - 400 * scaleFactor, (backgroundImage.height * scaleFactor) / 2 - 80 * scaleFactor, laundryPile.width / 2 * scaleFactor, laundryPile.height / 2 * scaleFactor);
+            image(sodaPile, width - 550 * refScale, height - 340 * refScale, sodaPile.width / 3.5 * refScale, sodaPile.height / 3.5 * refScale);
+            image(laundryPile, 450 * refScale, height - 400 * refScale, laundryPile.width / 2.7 * refScale, laundryPile.height / 2.7 * refScale);
+
             for (let i = 0; i < num; i++) {
-                image(dust[i], 0, 180 * scaleFactor + 138 * i * scaleFactor, 220 * scaleFactor, 125 * scaleFactor);
+                image(dust[i], -5, 150 * refScale + i * 135 * refScale, dust[i].width / 4.4 * refScale, dust[i].height / 3 * refScale);
             }
         }
 
         // Update clickable areas or interactions based on scale
         function mouseClicked() {
-            // Check for click on the dust piles
-            let dustWidth = 220 * scaleFactor;
-            let dustHeight = 125 * scaleFactor;
-            let dustStartY = 180 * scaleFactor;
-            let dustSpacing = 138 * scaleFactor;
+            dustLeft = 0;
+            dustRight = dust[0].width / 4.4 * refScale;
+            dustTop = 150 * refScale;
+            dustBottom = 150 * refScale + 3 * 135 * refScale + dust[0].height / 3 * refScale;
 
-            for (let i = 0; i < num; i++) {
-                let pileY = dustStartY + i * dustSpacing;
-                if (mouseX >= 0 && mouseX <= dustWidth && mouseY >= pileY && mouseY <= pileY + dustHeight) {
-                    window.location.href = 'dust.html';
-                    return;
-                }
+            if (mouseX >= dustLeft && mouseX <= dustRight && mouseY >= dustTop && mouseY <= dustBottom) {
+                window.location.href = 'dust.html';
+            }
+
+            dusterLeft = width - refScale * 150;
+            dusterRight = width;
+            dusterTop = height - 400 * refScale;
+            dusterBottom = height - 400 * refScale + 280 * refScale;
+            if (mouseX >= dusterLeft && mouseX <= dusterRight && mouseY >= dusterTop && mouseY <= dusterBottom) {
+                window.location.href = 'duster.html';
             }
         }
     </script>

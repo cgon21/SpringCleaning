@@ -55,12 +55,33 @@
         #askMean:hover {
             background-color: pink;
         }
+
+        #return {
+            display: none;
+            position: fixed;
+            top: 88%;
+            left: 50%;
+            transform: translate(-50%);
+            padding: 2vmin;
+            font-size: 3vmin;
+            color: white;
+            background-color: black;
+            border: none;
+            border-radius: 3vmin;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #return:hover {
+            background-color: pink;
+        }
     </style>
 </head>
 
 <body>
-    <button id="askNice">Would you please help me dust my shelf?</button>
-    <button id="askMean">Congrats! You get to help me!</button>
+    <button id="askNice">My mom wants me to clean my room. Can you help me?</button>
+    <button id="askMean">CLEAN FOR ME!</button>
+    <button id="return">Return to Room</button>
 
     <script>
         let bedside;
@@ -122,40 +143,37 @@
                     styledText("Sure, why not?", width / 2, height / 1.2);
                     break;
                 case 2:
-                    styledText("... No", width / 2, height / 1.2);
+                    styledText("No thanks", width / 2, height / 1.2);
                     break;
                 default:
             }
 
         }
 
-        // Update clickable areas or interactions based on scale
-        function mouseClicked() {
-            // Check for click on the dust piles
-            let dustWidth = 220 * scaleFactor;
-            let dustHeight = 125 * scaleFactor;
-            let dustStartY = 180 * scaleFactor;
-            let dustSpacing = 138 * scaleFactor;
-
-            for (let i = 0; i < num; i++) {
-                let pileY = dustStartY + i * dustSpacing;
-                if (mouseX >= 0 && mouseX <= dustWidth && mouseY >= pileY && mouseY <= pileY + dustHeight) {
-                    window.location.href = 'dust.html';
-                    return;
-                }
-            }
-        }
 
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('askNice');
             returnButton.addEventListener('click', function () {
-
+                convo = 1;
+                document.getElementById("askNice").style.display = "none";
+                document.getElementById("askMean").style.display = "none";
+                document.getElementById("return").style.display = "block";
             });
         });
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('askMean');
             returnButton.addEventListener('click', function () {
+                convo = 2;
+                document.getElementById("askNice").style.display = "none";
+                document.getElementById("askMean").style.display = "none";
+                document.getElementById("return").style.display = "block";
+            });
+        });
 
+        document.addEventListener("DOMContentLoaded", function () {
+            var returnButton = document.getElementById('return');
+            returnButton.addEventListener('click', function () {
+                window.location.href = 'room.html';
             });
         });
 
