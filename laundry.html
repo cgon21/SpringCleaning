@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirty Laundry</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #returnButton {
+            display: none;
+            position: fixed;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%);
+            padding: 2vmin;
+            font-size: 5vmin;
+            color: white;
+            background-color: black;
+            border: none;
+            border-radius: 3vmin;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #returnButton:hover {
+            background-color: pink;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="returnButton">Return to Room</button>
+    <script>
+        var hamperCheck = localStorage.getItem('hamperCheck');
+
+        let shelf;
+        let sock;
+        let sockSize;
+        let hamper;
+        let hamperSize;
+
+        const num = 5;
+
+        let refScale;
+        let width;
+        let height;
+
+        // Preload all images
+        function preload() {
+            shelf = loadImage('sprites/miniGames/court.png');
+            sock = loadImage("sprites/enemies/sock.png");
+            hamper = loadImage("sprites/miniGames/hamperCourt.png");
+        }
+
+        function setup() {
+            frameRate(60);
+
+            refScale = Math.min(windowWidth / shelf.width, windowHeight / shelf.height);
+
+            let canvasX = (windowWidth / 2) - (shelf.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (shelf.height / 2) * refScale;
+            width = shelf.width * refScale;
+            height = shelf.height * refScale;
+
+            canvas = createCanvas(width, height);
+            canvas.position(canvasX, canvasY);
+
+            sockSize = 150 * refScale;
+            hamperSize = 200 * refScale;
+
+            mouseX = windowWidth / 2;
+            mouseY = windowHeight / 2;
+        }
+
+        function windowResized() {
+            refScale = Math.min(windowWidth / shelf.width, windowHeight / shelf.height);
+            let canvasX = (windowWidth / 2) - (shelf.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (shelf.height / 2) * refScale;
+            width = shelf.width * refScale;
+            height = shelf.height * refScale;
+
+            resizeCanvas(width, height);
+            canvas.position(canvasX, canvasY);
+
+            sockSize = 150 * refScale;
+            hamperSize = 200 * refScale;
+            radius = 350 * refScale;
+        }
+
+        function draw() {
+            background(shelf); // set the background every frame
+            image(hamper, width - 580 * refScale, 270 * refScale, hamper.width / 3 * refScale, hamper.height / 3 * refScale);
+
+            if (hamperCheck === '0') {
+
+                document.getElementById("returnButton").style.display = "block";
+
+            } else {
+
+            }
+
+        }
+
+        // Check if bunny is still on screen
+        function onScreen(bunny) {
+            if (bunny.x >= -sockSize && bunny.x <= width + sockSize && bunny.y >= 0 && bunny.y <= height) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var returnButton = document.getElementById('returnButton');
+            returnButton.addEventListener('click', function () {
+                window.location.href = 'room.html';
+            });
+        });
+
+    </script>
+</body>
+
+</html>
