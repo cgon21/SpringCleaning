@@ -41,6 +41,8 @@
 <body>
     <button id="returnButton">Return to Room</button>
     <script>
+        var dusterCheck = localStorage.getItem('dusterCheck');
+
         let shelf;
         let dustBunnyImages = [];
         let dustBunnies = [];
@@ -123,88 +125,7 @@
             fill(100, 50, 0, 150 * dustBunnies.length / num);
             rect(0, 0, canvas.width, canvas.height);
 
-            // once every dust bunny has been sucked up, display text to say, "All clean!"
-            if (dustBunnies.length < 1) {
-                push();
-                rotate(45);
-                imageMode(CENTER);
-                image(duster, width / 2 + 100 * scale, height / 2 - 950 * scale, duster.width * scale, duster.height * scale);
-                pop();
-
-                sizeOfText = 180 * scale;
-                textSize(sizeOfText);
-                textStyle(BOLD);
-                textAlign(CENTER);
-                textFont('Papyrus');
-                fill(0);
-                text("All Clean!", width / 2 + 10 * scale, height / 2);
-                text("All Clean!", width / 2 - 10 * scale, height / 2);
-
-                fill(255);
-                text("All Clean!", width / 2, height / 2);
-
-                document.getElementById("returnButton").style.display = "block";
-
-            } else if (mouseIsPressed) {
-                document.getElementById("returnButton").style.display = "none";
-                for (let i = dustBunnies.length - 1; i >= 0; i--) {
-                    let bunny = dustBunnies[i];
-                    let bunnyImage = dustBunnyImages[i];
-                    let n = noise(bunny.x * noiseScale, bunny.y * noiseScale);
-                    let a = TAU * n;
-                    // bunny in range
-                    if (dist(bunny.x, bunny.y, mouseX, mouseY - 300 * scale) <= radius) {
-                        // make the bunny go away from the duster
-                        let directionX = mouseX - bunny.x;
-                        let directionY = mouseY - bunny.y;
-                        bunny.x -= directionX / 70;
-                        bunny.y -= directionY / 70;
-
-                        // spin the bunnies
-                        push();
-                        translate(bunny.x, bunny.y);
-                        rotate(frameCount * .15);
-                        image(bunnyImage, -bunnySize / 2, -bunnySize / 2, bunnySize, bunnySize);
-                        pop();
-                    }
-                    // bunny just outside of range
-                    else if (dist(bunny.x, bunny.y, mouseX, mouseY - 300 * scale) < radius + 5 * scale) {
-                        // spin the bunnies
-                        push();
-                        translate(bunny.x, bunny.y);
-                        rotate(frameCount * .15);
-                        image(bunnyImage, -bunnySize / 2, -bunnySize / 2, bunnySize, bunnySize);
-                        pop();
-
-                    }
-                    // bunny out of range
-                    else {
-                        // Go towards center
-                        let directionX = (width / 2 - bunny.x) / 300;
-                        let directionY = (height / 2 - bunny.y) / 300;
-                        bunny.x += directionX;
-                        bunny.y += directionY;
-                        image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
-                    }
-                    // Check if the bunny has moved out of frame
-                    if (!onScreen(bunny)) {
-                        dustBunnies.splice(i, 1); // Remove the bunny if it's off the screen
-                    }
-                }
-                // Duster dusts
-                dusterAngle += dusterAngleDirection * dusterAngleSpeed; // calculate angle to rotate
-                if (abs(dusterAngle) > dusterMaxAngle) { // if angle is too great, flip the direction
-                    dusterAngleDirection *= -1;
-                }
-                push();
-                translate(mouseX, mouseY + dusterSize * 1.75 - 100 * scale); // Adjusting the pivot point to the bottom
-                rotate(dusterAngle);
-                image(duster, -dusterSize / 3.5 - 60 * scale, -dusterSize * 3.5 - 160 * scale, dusterSize * 1.7, dusterSize * 3.5); // Position image relative to the new pivot
-                pop();
-            }
-            else {
-                document.getElementById("returnButton").style.display = "none";
-                // Mouse not being clicked/held
+            if (dusterCheck === '0') {
                 for (let i = dustBunnies.length - 1; i >= 0; i--) {
                     let bunny = dustBunnies[i];
                     let bunnyImage = dustBunnyImages[i];
@@ -217,12 +138,118 @@
                     bunny.y += sin(a);
 
                     image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
-                    image(duster, mouseX - dusterSize * 1.7 / 2, mouseY - dusterSize * 3.5 + 100 * scale, dusterSize * 1.7, dusterSize * 3.5);
 
                     // If bunny goes off screen, respawn at a random spot
                     if (!onScreen(bunny)) {
                         bunny.x = random(width);
                         bunny.y = random(height);
+                    }
+                }
+                document.getElementById("returnButton").style.display = "block";
+
+            } else {
+                // once every dust bunny has been sucked up, display text to say, "All clean!"
+                if (dustBunnies.length < 1) {
+                    push();
+                    rotate(45);
+                    imageMode(CENTER);
+                    image(duster, width / 2 + 100 * scale, height / 2 - 950 * scale, duster.width * scale, duster.height * scale);
+                    pop();
+
+                    sizeOfText = 180 * scale;
+                    textSize(sizeOfText);
+                    textStyle(BOLD);
+                    textAlign(CENTER);
+                    textFont('Papyrus');
+                    fill(0);
+                    text("All Clean!", width / 2 + 10 * scale, height / 2);
+                    text("All Clean!", width / 2 - 10 * scale, height / 2);
+
+                    fill(255);
+                    text("All Clean!", width / 2, height / 2);
+
+                    localStorage.setItem('dusterCheck', '2');
+                    document.getElementById("returnButton").style.display = "block";
+
+                } else if (mouseIsPressed) {
+                    document.getElementById("returnButton").style.display = "none";
+                    for (let i = dustBunnies.length - 1; i >= 0; i--) {
+                        let bunny = dustBunnies[i];
+                        let bunnyImage = dustBunnyImages[i];
+                        let n = noise(bunny.x * noiseScale, bunny.y * noiseScale);
+                        let a = TAU * n;
+                        // bunny in range
+                        if (dist(bunny.x, bunny.y, mouseX, mouseY - 300 * scale) <= radius) {
+                            // make the bunny go away from the duster
+                            let directionX = mouseX - bunny.x;
+                            let directionY = mouseY - bunny.y;
+                            bunny.x -= directionX / 70;
+                            bunny.y -= directionY / 70;
+
+                            // spin the bunnies
+                            push();
+                            translate(bunny.x, bunny.y);
+                            rotate(frameCount * .15);
+                            image(bunnyImage, -bunnySize / 2, -bunnySize / 2, bunnySize, bunnySize);
+                            pop();
+                        }
+                        // bunny just outside of range
+                        else if (dist(bunny.x, bunny.y, mouseX, mouseY - 300 * scale) < radius + 5 * scale) {
+                            // spin the bunnies
+                            push();
+                            translate(bunny.x, bunny.y);
+                            rotate(frameCount * .15);
+                            image(bunnyImage, -bunnySize / 2, -bunnySize / 2, bunnySize, bunnySize);
+                            pop();
+
+                        }
+                        // bunny out of range
+                        else {
+                            // Go towards center
+                            let directionX = (width / 2 - bunny.x) / 300;
+                            let directionY = (height / 2 - bunny.y) / 300;
+                            bunny.x += directionX;
+                            bunny.y += directionY;
+                            image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
+                        }
+                        // Check if the bunny has moved out of frame
+                        if (!onScreen(bunny)) {
+                            dustBunnies.splice(i, 1); // Remove the bunny if it's off the screen
+                        }
+                    }
+                    // Duster dusts
+                    dusterAngle += dusterAngleDirection * dusterAngleSpeed; // calculate angle to rotate
+                    if (abs(dusterAngle) > dusterMaxAngle) { // if angle is too great, flip the direction
+                        dusterAngleDirection *= -1;
+                    }
+                    push();
+                    translate(mouseX, mouseY + dusterSize * 1.75 - 100 * scale); // Adjusting the pivot point to the bottom
+                    rotate(dusterAngle);
+                    image(duster, -dusterSize / 3.5 - 60 * scale, -dusterSize * 3.5 - 160 * scale, dusterSize * 1.7, dusterSize * 3.5); // Position image relative to the new pivot
+                    pop();
+                }
+                else {
+                    document.getElementById("returnButton").style.display = "none";
+                    // Mouse not being clicked/held
+                    for (let i = dustBunnies.length - 1; i >= 0; i--) {
+                        let bunny = dustBunnies[i];
+                        let bunnyImage = dustBunnyImages[i];
+                        let n = noise(bunny.x * noiseScale, bunny.y * noiseScale);
+                        let a = TAU * n;
+                        let safe;
+
+                        // bunny follows path
+                        bunny.x += cos(a);
+                        bunny.y += sin(a);
+
+                        image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
+                        image(duster, mouseX - dusterSize * 1.7 / 2, mouseY - dusterSize * 3.5 + 100 * scale, dusterSize * 1.7, dusterSize * 3.5);
+
+                        // If bunny goes off screen, respawn at a random spot
+                        if (!onScreen(bunny)) {
+                            bunny.x = random(width);
+                            bunny.y = random(height);
+                        }
                     }
                 }
             }

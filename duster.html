@@ -84,6 +84,8 @@
     <button id="return">Return to Room</button>
 
     <script>
+        var dusterCheck = localStorage.getItem('dusterCheck');
+
         let bedside;
         let duster;
         let convo = 0;
@@ -158,6 +160,7 @@
                 document.getElementById("askNice").style.display = "none";
                 document.getElementById("askMean").style.display = "none";
                 document.getElementById("return").style.display = "block";
+                localStorage.setItem('dusterCheck', '1');
             });
         });
         document.addEventListener("DOMContentLoaded", function () {

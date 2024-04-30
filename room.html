@@ -20,6 +20,13 @@
 
 <body>
     <script>
+        let dusterCheck;
+        if (dusterCheck === null) {
+            localStorage.setItem('dusterCheck', '0');
+        }
+        dusterCheck = localStorage.getItem('dusterCheck');
+        // localStorage.setItem('dusterCheck', '0');
+
         let room;
         let duster, sodaPile, laundryPile;
         let dust = [];
@@ -82,21 +89,26 @@
 
         // Update clickable areas or interactions based on scale
         function mouseClicked() {
-            dustLeft = 0;
-            dustRight = dust[0].width / 4.4 * refScale;
-            dustTop = 150 * refScale;
-            dustBottom = 150 * refScale + 3 * 135 * refScale + dust[0].height / 3 * refScale;
+            if (dusterCheck != '2') {
 
-            if (mouseX >= dustLeft && mouseX <= dustRight && mouseY >= dustTop && mouseY <= dustBottom) {
-                window.location.href = 'dust.html';
+                dustLeft = 0;
+                dustRight = dust[0].width / 4.4 * refScale;
+                dustTop = 150 * refScale;
+                dustBottom = 150 * refScale + 3 * 135 * refScale + dust[0].height / 3 * refScale;
+
+                if (mouseX >= dustLeft && mouseX <= dustRight && mouseY >= dustTop && mouseY <= dustBottom) {
+                    window.location.href = 'dust.html';
+                }
             }
 
-            dusterLeft = width - refScale * 150;
-            dusterRight = width;
-            dusterTop = height - 400 * refScale;
-            dusterBottom = height - 400 * refScale + 280 * refScale;
-            if (mouseX >= dusterLeft && mouseX <= dusterRight && mouseY >= dusterTop && mouseY <= dusterBottom) {
-                window.location.href = 'duster.html';
+            if (dusterCheck === '0') {
+                dusterLeft = width - refScale * 150;
+                dusterRight = width;
+                dusterTop = height - 400 * refScale;
+                dusterBottom = height - 400 * refScale + 280 * refScale;
+                if (mouseX >= dusterLeft && mouseX <= dusterRight && mouseY >= dusterTop && mouseY <= dusterBottom) {
+                    window.location.href = 'duster.html';
+                }
             }
         }
     </script>
