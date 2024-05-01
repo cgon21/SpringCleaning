@@ -167,7 +167,7 @@
             }
 
             // Set cursor
-            cursor(mouseOverDust || mouseOverDuster ? HAND : ARROW);
+            cursor(mouseOverDust && dusterCheck != '2' || mouseOverDuster && dusterCheck === '0' ? HAND : ARROW);
         }
 
         // Update clickable areas or interactions based on scale

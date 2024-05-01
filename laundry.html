@@ -43,81 +43,213 @@
     <script>
         var hamperCheck = localStorage.getItem('hamperCheck');
 
-        let shelf;
-        let sock;
-        let sockSize;
-        let hamper;
-        let hamperSize;
-
+        let court;
+        let sock, sockImg, hamper, hamperImg;
         const num = 5;
+
+        let gravity = 0.4;
+        let isAiming = false;
+        let aimPower = 0;
+        let aimAngle = 0;
+        let maxPower = 16;
 
         let refScale;
         let width;
         let height;
+        let inAir = false;
+
+        let hamperLeft;
+        let hamperRight;
+        let hamperTop;
+        let hamperBottom;
 
         // Preload all images
         function preload() {
-            shelf = loadImage('sprites/miniGames/court.png');
-            sock = loadImage("sprites/enemies/sock.png");
-            hamper = loadImage("sprites/miniGames/hamperCourt.png");
+            court = loadImage('sprites/miniGames/court.png');
+            sockImg = loadImage("sprites/enemies/sock.png");
+            hamperImg = loadImage("sprites/miniGames/hamperCourt.png");
         }
 
         function setup() {
             frameRate(60);
 
-            refScale = Math.min(windowWidth / shelf.width, windowHeight / shelf.height);
+            refScale = Math.min(windowWidth / court.width, windowHeight / court.height);
 
-            let canvasX = (windowWidth / 2) - (shelf.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (shelf.height / 2) * refScale;
-            width = shelf.width * refScale;
-            height = shelf.height * refScale;
+            let canvasX = (windowWidth / 2) - (court.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (court.height / 2) * refScale;
+            width = court.width * refScale;
+            height = court.height * refScale;
 
             canvas = createCanvas(width, height);
             canvas.position(canvasX, canvasY);
 
-            sockSize = 150 * refScale;
-            hamperSize = 200 * refScale;
-
+            calculatePositions()
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
         }
 
         function windowResized() {
-            refScale = Math.min(windowWidth / shelf.width, windowHeight / shelf.height);
-            let canvasX = (windowWidth / 2) - (shelf.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (shelf.height / 2) * refScale;
-            width = shelf.width * refScale;
-            height = shelf.height * refScale;
+            refScale = Math.min(windowWidth / court.width, windowHeight / court.height);
+            let canvasX = (windowWidth / 2) - (court.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (court.height / 2) * refScale;
+            width = court.width * refScale;
+            height = court.height * refScale;
 
             resizeCanvas(width, height);
+            calculatePositions()
             canvas.position(canvasX, canvasY);
+        }
 
-            sockSize = 150 * refScale;
-            hamperSize = 200 * refScale;
-            radius = 350 * refScale;
+        function calculatePositions() {
+            hamper = {
+                x: width - 680 * refScale,
+                y: 270 * refScale,
+                width: hamperImg.width / 2 * refScale,
+                height: hamperImg.height / 2 * refScale
+            };
+
+            sock = {
+                x: 250 * refScale,
+                y: height - 220 * refScale,
+                width: sockImg.width / 6 * refScale,
+                height: sockImg.height / 6 * refScale,
+                velocityX: 0,
+                velocityY: 0,
+            };
+
+            hamperLeft = hamper.x;
+            hamperRight = hamper.x + hamper.width;
+            hamperTop = hamper.y;
+            hamperBottom = hamper.y + hamper.height;
         }
 
         function draw() {
-            background(shelf); // set the background every frame
-            image(hamper, width - 580 * refScale, 270 * refScale, hamper.width / 3 * refScale, hamper.height / 3 * refScale);
+            background(court); // set the background every frame
+            // image(hamper, width - 580 * refScale, 270 * refScale, hamper.width / 3 * refScale, hamper.height / 3 * refScale);
+
+            let sockTop = sock.y;
+            let sockBottom = sock.y + sock.height;
+            let sockLeft = sock.x;
+            let sockRight = sock.x + sock.width;
+
+            // Update sock position based on its velocity
+            sock.x += sock.velocityX;
+            sock.y += sock.velocityY;
+
+            // Apply gravity to the sock's vertical movement
+            sock.velocityY += gravity;
+
+            // Collision detection between the sock and the ground
+            if (sock.y > height - 250 * refScale) {
+                sock.y = height - 250 * refScale;
+                sock.velocityY = 0;
+                sock.velocityX = 0; // Stop sock movement on the ground
+                inAir = false;
+            }
+
+            // Check if the sock is off screen
+            if (!onScreen(sock)) {
+                sock.velocityX = -sock.velocityX * .9;
+            }
+
+            if (sockBottom > hamperTop + sock.width / 2 && sockTop < hamperBottom // within top and bottom
+            ) {
+                // Check if sock hits left side of hamper
+                if (sockRight > hamperLeft && // right of sock inside hamper
+                    sockLeft < hamperLeft && // left of sock outside hamper
+                    sock.velocityX > 0) { // moving right
+                    sock.velocityX = -sock.velocityX * .9; // negate x direction
+                    sock.velocityY += 0.5;
+                }
+                // Check if sock hits right side of hamper
+                else if (sockLeft < hamperRight && // left of sock inside hamper
+                    sockRight > hamperRight && // Right of sock outside hamper
+                    sock.velocityX < 0) { // moving left
+                    sock.velocityX = -sock.velocityX * .9; // negate x direction
+                    sock.velocityY += 0.5;
+                }
+            }
+            if (sockRight - sock.width / 2 > hamperLeft && sockLeft + sock.width / 2 < hamperRight // within right and left
+            ) {
+                // Check if sock hits bottom of hamper
+                if (sockTop < hamperBottom && // top of sock inside hamper
+                    sockBottom > hamperBottom && // bottom of sock outside hamper
+                    sock.velocityY < 0) { // moving up
+                    sock.velocityY = -sock.velocityY * .9;
+                }
+                // Check if sock lands in hamper
+                else if (sockBottom - sock.height / 2 > hamperTop && // half of sock inside hamper
+                    sockBottom < hamperBottom &&
+                    sock.velocityY > 0) { // checks if the sock is falling down into the hamper
+                    resetSock();
+                }
+            }
+
+            image(sockImg, sock.x, sock.y, sock.width, sock.height);
+            image(hamperImg, hamper.x, hamper.y, hamper.width, hamper.height);
+
+            // Draw aiming line if aiming
+            if (isAiming) {
+                drawTrajectory();
+            }
 
             if (hamperCheck === '0') {
-
                 document.getElementById("returnButton").style.display = "block";
-
             } else {
 
             }
 
         }
 
-        // Check if bunny is still on screen
-        function onScreen(bunny) {
-            if (bunny.x >= -sockSize && bunny.x <= width + sockSize && bunny.y >= 0 && bunny.y <= height) {
-                return true;
-            } else {
-                return false;
+        // Function to draw the trajectory as a dotted line
+        function drawTrajectory() {
+            let steps = 50; // Number of steps in the trajectory
+            let timeStep = 1; // Time step for simulation
+            let posX = sock.x + sock.width / 2, posY = sock.y + sock.height / 2;
+            let velX = (mouseX - 2 - posX) * 0.1, velY = (mouseY - 2 - posY) * 0.1;
+
+            stroke(255, 255, 255);
+            strokeWeight(4);
+            for (let i = 4; i < steps; i++) {
+                let oldX = posX, oldY = posY;
+                velY += gravity * timeStep; // Apply gravity
+                posX += velX * timeStep;
+                posY += velY * timeStep;
+
+                // Draw a dot at the current position
+                point(posX, posY);
             }
+        }
+
+        // Check if the sock is still on the screen
+        function onScreen(sock) {
+            return sock.x >= 0 && sock.x <= width - sock.width;
+        }
+
+        // Reset sock to starting position and make it visible
+        function resetSock() {
+            sock.x = 250 * refScale;
+            sock.y = height - 220 * refScale;
+            sock.velocityX = 0;
+            sock.velocityY = 0;
+            sock.visible = true; // Ensure sock is visible when reset
+        }
+
+        // Mouse functions for aiming and shooting
+        function mousePressed() {
+            if (!inAir) {
+                isAiming = true;
+            }
+        }
+
+        function mouseReleased() {
+            if (isAiming) {
+                let aimVector = createVector(mouseX - sock.x - sock.width / 2, mouseY - sock.y - sock.height / 2);
+                sock.velocityX = max(min(aimVector.x * 0.1, maxPower), -maxPower);
+                sock.velocityY = max(aimVector.y * 0.1, -maxPower);
+            }
+            inAir = true;
+            isAiming = false;
         }
 
         document.addEventListener("DOMContentLoaded", function () {
