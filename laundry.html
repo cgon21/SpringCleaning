@@ -44,14 +44,14 @@
         var hamperCheck = localStorage.getItem('hamperCheck');
 
         let court;
-        let sock, sockImg, hamper, hamperImg;
+        let sock, sockImg, hamper, hamperImg, girl, girlEmpty, girlHolding;
         const num = 5;
 
         let gravity = 0.4;
         let isAiming = false;
         let aimPower = 0;
         let aimAngle = 0;
-        let maxPower = 16;
+        let maxPower = 20;
 
         let refScale;
         let width;
@@ -68,6 +68,8 @@
             court = loadImage('sprites/miniGames/court.png');
             sockImg = loadImage("sprites/enemies/sock.png");
             hamperImg = loadImage("sprites/miniGames/hamperCourt.png");
+            girlEmpty = loadImage("sprites/miniGames/hamperShot.png");
+            girlHolding = loadImage("sprites/miniGames/hamperSock.png");
         }
 
         function setup() {
@@ -108,11 +110,18 @@
                 height: hamperImg.height / 2 * refScale
             };
 
+            girl = {
+                x: 250 * refScale,
+                y: height - 470 * refScale,
+                width: girlEmpty.width / 2 * refScale,
+                height: girlEmpty.height / 2 * refScale
+            };
+
             sock = {
                 x: 250 * refScale,
                 y: height - 220 * refScale,
-                width: sockImg.width / 6 * refScale,
-                height: sockImg.height / 6 * refScale,
+                width: sockImg.width / 5 * refScale,
+                height: sockImg.height / 5 * refScale,
                 velocityX: 0,
                 velocityY: 0,
             };
@@ -185,13 +194,20 @@
                 }
             }
 
-            image(sockImg, sock.x, sock.y, sock.width, sock.height);
-            image(hamperImg, hamper.x, hamper.y, hamper.width, hamper.height);
-
             // Draw aiming line if aiming
             if (isAiming) {
+                girl.x = sock.x;
+                image(girlHolding, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
                 drawTrajectory();
             }
+            else {
+                image(sockImg, sock.x, sock.y, sock.width, sock.height);
+            }
+            if (inAir) {
+                image(girlEmpty, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
+            }
+
+            image(hamperImg, hamper.x, hamper.y, hamper.width, hamper.height);
 
             if (hamperCheck === '0') {
                 document.getElementById("returnButton").style.display = "block";
@@ -206,7 +222,12 @@
             let steps = 50; // Number of steps in the trajectory
             let timeStep = 1; // Time step for simulation
             let posX = sock.x + sock.width / 2, posY = sock.y + sock.height / 2;
-            let velX = (mouseX - 2 - posX) * 0.1, velY = (mouseY - 2 - posY) * 0.1;
+            let velX = max(min((mouseX - sock.x - sock.width / 2) * 0.1, maxPower), -maxPower);
+            let velY = max((mouseY - sock.y - sock.height / 2) * 0.1, -maxPower);
+
+            // let aimVector = createVector(mouseX - sock.x - sock.width / 2, mouseY - sock.y - sock.height / 2);
+            // sock.velocityX = max(min(aimVector.x * 0.1, maxPower), -maxPower);
+            // sock.velocityY = max(aimVector.y * 0.1, -maxPower);
 
             stroke(255, 255, 255);
             strokeWeight(4);

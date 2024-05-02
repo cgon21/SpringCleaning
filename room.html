@@ -37,36 +37,20 @@
         // localStorage.setItem('dusterCheck', '0');
 
         let room;
-        let duster, soda, laundry, hamper;
-        let dust = [];
+        let dustImg, dusterImg, sodaImg, laundryImg, hamperImg;
+        let dust, duster, soda, laundry, hamper;
+
         let num = 4;
         let refScale;
-
-        let dustLeft;
-        let dustRight;
-        let dustTop;
-        let dustBottom;
-
-        let dusterLeft;
-        let dusterRight;
-        let dusterTop;
-        let dusterBottom;
-
-        let hamperLeft;
-        let hamperRight;
-        let hamperTop;
-        let hamperBottom;
 
         // Preload all images
         function preload() {
             room = loadImage('sprites/room/room.png');
-            duster = loadImage('sprites/room/dusterIRL.png');
-            hamper = loadImage('sprites/room/hamperIRL.png');
-            soda = loadImage('sprites/room/sodaPile.png');
-            laundry = loadImage('sprites/room/laundryPile.png');
-            for (let i = 0; i < num; i++) {
-                dust.push(loadImage('sprites/room/dust.png'));
-            }
+            dusterImg = loadImage('sprites/room/dusterIRL.png');
+            hamperImg = loadImage('sprites/room/hamperIRL.png');
+            sodaImg = loadImage('sprites/room/sodaPile.png');
+            laundryImg = loadImage('sprites/room/laundryPile.png');
+            dustImg = loadImage('sprites/room/dust.png');
         }
 
         function setup() {
@@ -94,53 +78,64 @@
         }
 
         function calculatePositions() {
-            dusterX = -90 * refScale;
-            dusterY = -170 * refScale;
-            dusterWidth = duster.width / 3.4 * refScale;
-            dusterHeight = duster.height / 3.4 * refScale;
-            dusterLeft = width - refScale * 150;
-            dusterRight = width;
-            dusterTop = height - 400 * refScale;
-            dusterBottom = height - 400 * refScale + 280 * refScale;
+            hamper = {
+                left: 50 * refScale,
+                right: 50 * refScale + hamperImg.width / 2.4 * refScale,
+                top: height - 210 * refScale,
+                bottom: height,
+                width: hamperImg.width / 2.4 * refScale,
+                height: hamperImg.height / 2.4 * refScale
+            };
 
-            dustWidth = dust[0].width / 4.4 * refScale;
-            dustHeight = dust[0].height / 3 * refScale;
-            dustLeft = 0;
-            dustRight = dust[0].width / 4.4 * refScale;
-            dustTop = 150 * refScale;
-            dustBottom = 150 * refScale + 3 * 135 * refScale + dust[0].height / 3 * refScale;
+            laundry = {
+                left: 450 * refScale,
+                right: 450 * refScale + laundryImg.width / 2.7 * refScale,
+                top: height - 400 * refScale,
+                bottom: height,
+                width: laundryImg.width / 2.7 * refScale,
+                height: laundryImg.height / 2.7 * refScale
+            };
 
-            hamperWidth = hamper.width / 2.4 * refScale;
-            hamperHeight = hamper.height / 2.4 * refScale;
-            hamperLeft = 50 * refScale;
-            hamperRight = 50 * refScale + hamper.width / 2.4 * refScale;
-            hamperTop = height - 210 * refScale;
-            hamperBottom = height;
+            duster = {
+                x: -90 * refScale,
+                y: -170 * refScale,
+                left: width - refScale * 150,
+                right: width,
+                top: height - 400 * refScale,
+                bottom: height - 400 * refScale + 280 * refScale,
+                width: dusterImg.width / 3.4 * refScale,
+                height: dusterImg.height / 3.4 * refScale
+            };
 
-            sodaWidth = soda.width / 3.5 * refScale;
-            sodaHeight = soda.height / 3.5 * refScale;
-            sodaLeft = width - 550 * refScale;
-            // sodaRight = 50 * refScale + hamper.width / 2.4 * refScale;
-            sodaTop = height - 340 * refScale;
-            // sodaBottom = height;
+            dust = {
+                left: 0,
+                right: dustImg.width / 4.4 * refScale,
+                top: 150 * refScale,
+                bottom: (555 + dustImg.height / 3) * refScale,
+                width: dustImg.width / 4.4 * refScale,
+                height: dustImg.height / 3 * refScale
+            };
 
-            laundryWidth = laundry.width / 2.7 * refScale;
-            laundryHeight = laundry.height / 2.7 * refScale;
-            laundryLeft = 450 * refScale;
-            // laundryRight = 50 * refScale + hamper.width / 2.4 * refScale;
-            laundryTop = height - 400 * refScale;
-            // laundryBottom = height;
+            soda = {
+                left: width - 550 * refScale,
+                right: width - 550 * refScale + sodaImg.width,
+                top: height - 340 * refScale,
+                bottom: height - 340 * refScale + sodaImg.height,
+                width: sodaImg.width / 3.5 * refScale,
+                height: sodaImg.height / 3.5 * refScale
+            };
         }
 
         function draw() {
             clear();
             background(room); // set the background every frame
 
-            let mouseOverDuster = mouseX >= dusterLeft && mouseX <= dusterRight && mouseY >= dusterTop && mouseY <= dusterBottom;
-            let mouseOverDust = mouseX >= dustLeft && mouseX <= dustRight && mouseY >= dustTop && mouseY <= dustBottom;
+            let mouseOverDuster = mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom;
+            let mouseOverDust = mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom;
+            let mouseOverHamper = mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom;
 
             if (dusterCheck === '0') {
-                if (mouseX >= dusterLeft && mouseX <= dusterRight && mouseY >= dusterTop && mouseY <= dusterBottom) {
+                if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
                     tint(192, 255, 172);
                 }
             }
@@ -148,44 +143,59 @@
             push();
             translate(width / 2 + 680 * refScale, height / 2 + 180 * refScale);
             rotate(PI * 1.1);
-            image(duster, dusterX, dusterY, dusterWidth, dusterHeight);
+            image(dusterImg, duster.x, duster.y, duster.width, duster.height);
             pop();
             // square(width - refScale * 150, height - 700 * refScale, 150 * refScale);
             tint('none');
-            image(soda, sodaLeft, sodaTop, sodaWidth, sodaHeight);
-            image(laundry, laundryLeft, laundryTop, laundryWidth, laundryHeight);
-            image(hamper, hamperLeft, hamperTop, hamperWidth, hamperHeight);
+            image(sodaImg, soda.left, soda.top, soda.width, soda.height);
+            image(laundryImg, laundry.left, laundry.top, laundry.width, laundry.height);
 
             if (dusterCheck != '2') {
-                if (mouseX >= dustLeft && mouseX <= dustRight && mouseY >= dustTop && mouseY <= dustBottom) {
+                if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
                     tint(192, 255, 172);
                 }
                 for (let i = 0; i < num; i++) {
-                    image(dust[i], -5, dustTop + i * 135 * refScale, dustWidth, dustHeight);
+                    image(dustImg, -5, dust.top + i * 135 * refScale, dust.width, dust.height);
                 }
                 tint('none');
             }
 
+            if (hamperCheck != '2') {
+                if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
+                    tint(192, 255, 172);
+                }
+                image(hamperImg, hamper.left, hamper.top, hamper.width, hamper.height);
+                tint('none');
+            }
+
             // Set cursor
-            cursor(mouseOverDust && dusterCheck != '2' || mouseOverDuster && dusterCheck === '0' ? HAND : ARROW);
+            cursor(mouseOverDust && dusterCheck != '2' ||
+                mouseOverDuster && dusterCheck === '0' ||
+                mouseOverHamper && hamperCheck === '0' ? HAND : ARROW);
         }
 
         // Update clickable areas or interactions based on scale
         function mouseClicked() {
             if (dusterCheck != '2') {
-                if (mouseX >= dustLeft && mouseX <= dustRight && mouseY >= dustTop && mouseY <= dustBottom) {
+                if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
                     window.location.href = 'dust.html';
                 }
             }
 
             if (dusterCheck === '0') {
-                if (mouseX >= dusterLeft && mouseX <= dusterRight && mouseY >= dusterTop && mouseY <= dusterBottom) {
+                if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
                     window.location.href = 'duster.html';
                 }
             }
 
+            if (hamperCheck != '2') {
+                if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
+                    window.location.href = 'dust.html';
+                }
+            }
+
             if (hamperCheck === '0') {
-                if (mouseX >= hamperLeft && mouseX <= hamperRight && mouseY >= hamperTop && mouseY <= hamperBottom) {
+                if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
                     window.location.href = 'hamper.html';
                 }
             }
