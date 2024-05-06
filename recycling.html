@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamper</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #askNice {
+            display: block;
+            position: fixed;
+            top: 84%;
+            left: 50%;
+            transform: translate(-50%);
+            padding: 2vmin;
+            font-size: 3vmin;
+            color: white;
+            background-color: black;
+            border: none;
+            border-radius: 3vmin;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #askNice:hover {
+            background-color: pink;
+        }
+
+        #askMean {
+            display: block;
+            position: fixed;
+            top: 92%;
+            left: 50%;
+            transform: translate(-50%);
+            padding: 2vmin;
+            font-size: 3vmin;
+            color: white;
+            background-color: black;
+            border: none;
+            border-radius: 3vmin;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #askMean:hover {
+            background-color: pink;
+        }
+
+        #return {
+            display: none;
+            position: fixed;
+            top: 88%;
+            left: 50%;
+            transform: translate(-50%);
+            padding: 2vmin;
+            font-size: 3vmin;
+            color: white;
+            background-color: black;
+            border: none;
+            border-radius: 3vmin;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #return:hover {
+            background-color: pink;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="askNice">My mom wants me to clean my room. Can you help me?</button>
+    <button id="askMean">CLEAN FOR ME!</button>
+    <button id="return">Return to Room</button>
+
+    <script>
+        var dusterCheck = localStorage.getItem('hamperCheck');
+
+        let bottomLeft;
+        let hamper;
+        let convo = 0;
+        let refScale;
+
+        // Preload all images
+        function preload() {
+            bottomLeft = loadImage('sprites/characters/hamperBackground.png');
+            hamper = loadImage('sprites/characters/hamper.png');
+        }
+
+        function setup() {
+            refScale = Math.min(windowWidth / bottomLeft.width, windowHeight / bottomLeft.height);
+
+            let canvasX = (windowWidth / 2) - (bottomLeft.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (bottomLeft.height / 2) * refScale;
+            width = bottomLeft.width * refScale;
+            height = bottomLeft.height * refScale;
+
+            canvas = createCanvas(width, height);
+            canvas.position(canvasX, canvasY);
+        }
+
+        function windowResized() {
+            refScale = Math.min(windowWidth / bottomLeft.width, windowHeight / bottomLeft.height);
+            let canvasX = (windowWidth / 2) - (bottomLeft.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (bottomLeft.height / 2) * refScale;
+            width = bottomLeft.width * refScale;
+            height = bottomLeft.height * refScale;
+
+            resizeCanvas(width, height);
+            canvas.position(canvasX, canvasY);
+        }
+
+        function styledText(string, x, y) {
+            sizeOfText = 18 * refScale;
+            textSize(sizeOfText);
+            textStyle(BOLD);
+            textAlign(CENTER);
+            textFont('Papyrus');
+            fill(0);
+            text(string, x + 1.5 * refScale, y);
+            text(string, x - 1.5 * refScale, y);
+            fill(255);
+            text(string, x, y);
+        }
+
+        function draw() {
+            clear();
+            background(bottomLeft); // set the background every frame
+            image(hamper, width / 2 - hamper.width / 8 * refScale, height - hamper.height / 3 * refScale, hamper.width / 4 * refScale, hamper.height / 4 * refScale);
+
+            switch (convo) {
+                case 0:
+                    styledText("Can I help you?", width / 2, height / 1.2);
+                    break;
+                case 1:
+                    styledText("Sure, why not?", width / 2, height / 1.2);
+                    break;
+                case 2:
+                    styledText("No thanks", width / 2, height / 1.2);
+                    break;
+                default:
+            }
+
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var returnButton = document.getElementById('askNice');
+            returnButton.addEventListener('click', function () {
+                convo = 1;
+                document.getElementById("askNice").style.display = "none";
+                document.getElementById("askMean").style.display = "none";
+                document.getElementById("return").style.display = "block";
+                localStorage.setItem('hamperCheck', '1');
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            var returnButton = document.getElementById('askMean');
+            returnButton.addEventListener('click', function () {
+                convo = 2;
+                document.getElementById("askNice").style.display = "none";
+                document.getElementById("askMean").style.display = "none";
+                document.getElementById("return").style.display = "block";
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var returnButton = document.getElementById('return');
+            returnButton.addEventListener('click', function () {
+                window.location.href = 'room.html';
+            });
+        });
+
+    </script>
+</body>
+
+</html>

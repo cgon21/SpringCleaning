@@ -32,13 +32,20 @@
         }
         hamperCheck = localStorage.getItem('hamperCheck');
 
+        let sodaCheck;
+        if (sodaCheck === null) {
+            localStorage.setItem('sodaCheck', '0');
+        }
+        sodaCheck = localStorage.getItem('sodaCheck');
+
         // Reset
         // localStorage.setItem('hamperCheck', '0');
         // localStorage.setItem('dusterCheck', '0');
+        // localStorage.setItem('sodaCheck', '0');
 
         let room;
-        let dustImg, dusterImg, sodaImg, laundryImg, hamperImg;
-        let dust, duster, soda, laundry, hamper;
+        let dustImg, dusterImg, sodaImg, recylingImg, laundryImg, hamperImg;
+        let dust, duster, soda, recyling, laundry, hamper;
 
         let num = 4;
         let refScale;
@@ -49,6 +56,7 @@
             dusterImg = loadImage('sprites/room/dusterIRL.png');
             hamperImg = loadImage('sprites/room/hamperIRL.png');
             sodaImg = loadImage('sprites/room/sodaPile.png');
+            recylingImg = loadImage('sprites/room/recyclingBin.png');
             laundryImg = loadImage('sprites/room/laundryPile.png');
             dustImg = loadImage('sprites/room/dust.png');
         }
@@ -80,24 +88,24 @@
         function calculatePositions() {
             hamper = {
                 left: 50 * refScale,
-                right: 50 * refScale + hamperImg.width / 2.4 * refScale,
                 top: height - 210 * refScale,
-                bottom: height,
-                width: hamperImg.width / 2.4 * refScale,
-                height: hamperImg.height / 2.4 * refScale
+                width: hamperImg.width / 2.2 * refScale,
+                height: hamperImg.height / 2.2 * refScale
             };
+            hamper.right = hamper.left + hamper.width;
+            hamper.bottom = hamper.top + hamper.height;
 
             laundry = {
-                left: 450 * refScale,
-                right: 450 * refScale + laundryImg.width / 2.7 * refScale,
-                top: height - 400 * refScale,
-                bottom: height,
-                width: laundryImg.width / 2.7 * refScale,
-                height: laundryImg.height / 2.7 * refScale
+                left: 620 * refScale,
+                top: height - 280 * refScale,
+                width: laundryImg.width / 2.5 * refScale,
+                height: laundryImg.height / 2.5 * refScale
             };
+            laundry.right = laundry.left + laundry.width;
+            laundry.bottom = laundry.top + laundry.height;
 
             duster = {
-                x: -90 * refScale,
+                x: -60 * refScale,
                 y: -170 * refScale,
                 left: width - refScale * 150,
                 right: width,
@@ -109,21 +117,31 @@
 
             dust = {
                 left: 0,
-                right: dustImg.width / 4.4 * refScale,
-                top: 150 * refScale,
-                bottom: (555 + dustImg.height / 3) * refScale,
+                top: 170 * refScale,
                 width: dustImg.width / 4.4 * refScale,
                 height: dustImg.height / 3 * refScale
             };
+            dust.right = dust.left + dust.width;
+            dust.bottom = dust.top + 3 * 140 * refScale + dust.height;
 
             soda = {
-                left: width - 550 * refScale,
-                right: width - 550 * refScale + sodaImg.width,
-                top: height - 340 * refScale,
-                bottom: height - 340 * refScale + sodaImg.height,
+                left: width - 450 * refScale,
+                top: height - 270 * refScale,
                 width: sodaImg.width / 3.5 * refScale,
                 height: sodaImg.height / 3.5 * refScale
             };
+            soda.right = soda.left + soda.width;
+            soda.bottom = soda.top + soda.height;
+
+            recyling = {
+                left: 420 * refScale,
+                top: 510 * refScale,
+                width: recylingImg.width / 4.8 * refScale,
+                height: recylingImg.height / 4.8 * refScale
+            };
+            recyling.right = recyling.left + recyling.width;
+            recyling.bottom = recyling.top + recyling.height;
+
         }
 
         function draw() {
@@ -134,6 +152,8 @@
             let mouseOverDust = mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom;
             let mouseOverHamper = mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom;
             let mouseOverLaundry = mouseX >= laundry.left && mouseX <= laundry.right && mouseY >= laundry.top && mouseY <= laundry.bottom;
+            let mouseOverSoda = mouseX >= soda.left && mouseX <= soda.right && mouseY >= soda.top && mouseY <= soda.bottom;
+            let mouseOverRecycling = mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom;
 
             if (dusterCheck != '2') {
                 if (dusterCheck === '0') {
@@ -148,14 +168,28 @@
                     pop();
                     // square(width - refScale * 150, height - 700 * refScale, 150 * refScale);
                     tint('none');
-                    image(sodaImg, soda.left, soda.top, soda.width, soda.height);
                 }
                 if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
                     tint(192, 255, 172);
                 }
                 for (let i = 0; i < num; i++) {
-                    image(dustImg, -5, dust.top + i * 135 * refScale, dust.width, dust.height);
+                    image(dustImg, -5, dust.top + i * 140 * refScale, dust.width, dust.height);
                 }
+                tint('none');
+            }
+
+            if (sodaCheck != '2') {
+                if (sodaCheck === '0') {
+                    if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom) {
+                        tint(192, 255, 172);
+                    }
+                    image(recylingImg, recyling.left, recyling.top, recyling.width, recyling.height);
+                }
+                tint('none');
+                if (mouseX >= soda.left && mouseX <= soda.right && mouseY >= soda.top && mouseY <= soda.bottom) {
+                    tint(192, 255, 172);
+                }
+                image(sodaImg, soda.left, soda.top, soda.width, soda.height);
                 tint('none');
             }
 
@@ -174,21 +208,21 @@
                 tint('none');
             }
 
-            // Set cursor
+            // Set cursor to hand when over an object in the room
             cursor(mouseOverDust && dusterCheck != '2' ||
                 mouseOverDuster && dusterCheck === '0' ||
+                mouseOverLaundry && hamperCheck != '2' ||
                 mouseOverHamper && hamperCheck === '0' ||
-                mouseOverLaundry && hamperCheck != '2' ? HAND : ARROW);
+                mouseOverSoda && sodaCheck != '2' ||
+                mouseOverRecycling && sodaCheck === '0' ? HAND : ARROW);
         }
 
-        // Update clickable areas or interactions based on scale
         function mouseClicked() {
             if (dusterCheck != '2') {
                 if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
                     window.location.href = 'dust.html';
                 }
             }
-
             if (dusterCheck === '0') {
                 if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
                     window.location.href = 'duster.html';
@@ -200,10 +234,21 @@
                     window.location.href = 'laundry.html';
                 }
             }
-
             if (hamperCheck === '0') {
                 if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
                     window.location.href = 'hamper.html';
+                }
+            }
+
+            if (sodaCheck != '2') {
+                if (mouseX >= laundry.left && mouseX <= laundry.right && mouseY >= laundry.top && mouseY <= laundry.bottom) {
+                    window.location.href = 'soda.html';
+                }
+            }
+
+            if (sodaCheck === '0') {
+                if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
+                    window.location.href = 'recycling.html';
                 }
             }
         }
