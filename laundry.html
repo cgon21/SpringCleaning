@@ -44,19 +44,21 @@
         var hamperCheck = localStorage.getItem('hamperCheck');
 
         let court;
-        let sock, sockImg, hamper, hamperImg, girl, girlEmpty, girlHolding;
-        const num = 5;
+        let sockImg, hamperSock, hamper, hamperImg, girl, girlEmpty, girlHolding;
+        let socks = [];
+        const num = 6;
 
-        let gravity = 0.4;
+        let gravity;
         let isAiming = false;
         let aimPower = 0;
         let aimAngle = 0;
-        let maxPower = 20;
+        let maxPowerX;
+        let maxPowerY;
 
         let refScale;
         let width;
         let height;
-        let inAir = false;
+        let bounce = false;
 
         // Preload all images
         function preload() {
@@ -81,6 +83,7 @@
             canvas.position(canvasX, canvasY);
 
             calculatePositions()
+
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
         }
@@ -98,6 +101,10 @@
         }
 
         function calculatePositions() {
+            gravity = 0.5 * refScale;
+            maxPowerX = 12 * refScale;
+            maxPowerY = 29 * refScale;
+
             hamper = {
                 left: width - 680 * refScale,
                 right: width - 680 * refScale + hamperImg.width / 2 * refScale,
@@ -114,7 +121,7 @@
                 height: girlEmpty.height / 2 * refScale
             };
 
-            sock = {
+            hamperSock = {
                 left: 250 * refScale,
                 right: 250 * refScale + sockImg.width / 5 * refScale,
                 top: height - 220 * refScale,
@@ -123,12 +130,111 @@
                 height: sockImg.height / 5 * refScale,
                 velocityX: 0,
                 velocityY: 0,
+                inAir: false,
             };
+
+            for (let i = 0; i < num; i++) {
+                socks[i] = {
+                    left: 100 * refScale + i * (sockImg.width / 5 * refScale) * 1.15,
+                    right: 250 * refScale + sockImg.width / 5 * refScale,
+                    top: height - 220 * refScale,
+                    bottom: height - 220 * refScale + sockImg.height / 5 * refScale,
+                    width: sockImg.width / 5 * refScale,
+                    height: sockImg.height / 5 * refScale,
+                    velocityX: 0,
+                    velocityY: 0,
+                    inAir: false,
+                };
+                if (hamperCheck < 1) {
+                    socks[i].left = i * (sockImg.width / 5 * refScale) * 1.15;
+                }
+            }
         }
 
         function draw() {
             background(court); // set the background every frame
 
+            // hamperCheck = '0';
+            if (hamperCheck === '0') {
+                // Hamper is not present
+                socks.forEach(sock => {
+                    sockMovement(sock);
+                    checkCollisions(sock);
+                    let check = Math.random(1);
+                    if (!sock.inAir && check > 0.985) {
+                        let aimVector = createVector((hamper.left - sock.left + sock.width / 2) / 5,
+                            (hamper.top + hamper.height / 2 - sock.top - sock.height / 2) / 5);
+                        sock.velocityX = Math.random() * (5 * refScale - (-5 * refScale)) + (-5 * refScale);
+                        sock.velocityY = Math.random() * (-1 * refScale - (-5 * refScale)) + (-5 * refScale);
+                        sock.inAir = true;
+                    }
+                    image(sockImg, sock.left, sock.top, sock.width, sock.height);
+                })
+                document.getElementById("returnButton").style.display = "block";
+            }
+
+            // Hamper is here
+            else {
+                bounce = true;
+                socks.forEach(sock => {
+                    sockMovement(sock);
+                    checkCollisions(sock);
+                    if (sock != socks[0]) {
+                        let check = Math.random(1);
+                        if (!sock.inAir && check > 0.985) {
+                            let aimVector = createVector((hamper.left - sock.left + sock.width / 2) / 5,
+                                (hamper.top + hamper.height / 2 - sock.top - sock.height / 2) / 5);
+                            sock.velocityX = Math.random() * (5 * refScale - (-5 * refScale)) + (-5 * refScale);
+                            sock.velocityY = Math.random() * (-1 * refScale - (-5 * refScale)) + (-5 * refScale);
+                            sock.inAir = true;
+                        }
+
+                        image(sockImg, sock.left, sock.top, sock.width, sock.height);
+                    }
+                    else {
+                        if (isAiming) {
+                            girl.x = sock.left;
+                            image(girlHolding, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
+                            drawTrajectory(sock);
+                        }
+                        else if (sock) {
+                            image(sockImg, sock.left, sock.top, sock.width, sock.height);
+                            if (sock.inAir) {
+                                image(girlEmpty, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
+                            }
+                        }
+                    }
+                })
+
+                // socks all clean
+                if (socks.length < 1) {
+                    styledText("Laundry", width / 3.5, height / 3);
+                    styledText("Picked Up!", width / 3.5, height / 1.9);
+                    localStorage.setItem('hamperCheck', '2');
+                    document.getElementById("returnButton").style.display = "block";
+
+                    image(sockImg, hamper.left, hamper.top - hamperSock.height / 2, hamperSock.width, hamperSock.height);
+                    image(sockImg, hamper.right - hamperSock.width, hamper.top - hamperSock.height / 2, hamperSock.width, hamperSock.height);
+                    image(sockImg, hamper.left + (hamper.right - hamperSock.width - hamper.left) / 2, hamper.top - hamperSock.height / 1.4, hamperSock.width, hamperSock.height);
+                }
+                image(hamperImg, hamper.left, hamper.top, hamper.width, hamper.height);
+            }
+
+        }
+
+        function styledText(string, x, y) {
+            stroke(0, 0, 0);
+            strokeWeight(5);
+            sizeOfText = 130 * refScale;
+            textSize(sizeOfText);
+            textStyle(BOLD);
+            textAlign(CENTER);
+            textFont('Papyrus');
+            fill(255);
+            text(string, x, y);
+        }
+
+        function sockMovement(sock) {
             // Update sock position based on its velocity
             sock.left += sock.velocityX;
             sock.right = sock.left + sock.width;
@@ -136,39 +242,42 @@
             sock.bottom = sock.top + sock.height;
 
             // Apply gravity to the sock's vertical movement
-            sock.velocityY += gravity;
-
+            if (sock.inAir) {
+                sock.velocityY += gravity;
+            }
             // Collision detection between the sock and the ground
             if (sock.top > height - 250 * refScale) {
                 // Make the sock bounce a bit before stopping
-                if (abs(sock.velocityX) > 0.1 && abs(sock.velocityY) > 0.1) {
-                    sock.velocityY = -sock.velocityY / 2;
-                    sock.velocityX = sock.velocityX / 2;
+                if (bounce == true && (abs(sock.velocityX) > 1.5 * refScale || abs(sock.velocityY) > 1.5 * refScale)) {
+                    sock.velocityY = -sock.velocityY / 1.5 * refScale;
+                    sock.velocityX = sock.velocityX / 1.5 * refScale;
                 }
                 // Stop the sock completely
                 else {
                     sock.top = height - 250 * refScale;
                     sock.velocityY = 0;
                     sock.velocityX = 0;
-                    inAir = false;
+                    sock.inAir = false;
                 }
             }
+        }
 
+        function checkCollisions(sock) {
             // Check if the sock is off screen
             if (!onScreen(sock)) {
                 // sock is on right of screen
                 if (sock.x > width / 2) {
-                    sock.x = 2;
+                    sock.x = 2 * refScale;
                 }
                 // sock is on left of screen
                 else {
-                    sock.x = width - 2;
+                    sock.x = width - 2 * refScale;
                 }
                 sock.velocityX = -sock.velocityX * .9;
             }
 
-            if (sock.bottom > hamper.top + sock.width / 2 && sock.top < hamper.bottom // within top and bottom
-            ) {
+            // within top and bottom
+            if (sock.bottom > hamper.top + sock.width / 2 && sock.top < hamper.bottom) {
                 // Check if sock hits left side of hamper
                 if (sock.right > hamper.left && // right of sock inside hamper
                     sock.left < hamper.left && // left of sock outside hamper
@@ -184,8 +293,9 @@
                     sock.velocityY += 0.5;
                 }
             }
-            if (sock.right - sock.width / 2 > hamper.left && sock.left + sock.width / 2 < hamper.right // within right and left
-            ) {
+
+            // within right and left 
+            if (sock.right - sock.width / 2 > hamper.left && sock.left + sock.width / 2 < hamper.right) {
                 // Check if sock hits bottom of hamper
                 if (sock.top < hamper.bottom && // top of sock inside hamper
                     sock.bottom > hamper.bottom && // bottom of sock outside hamper
@@ -196,40 +306,19 @@
                 else if (sock.bottom - sock.height / 2 > hamper.top && // half of sock inside hamper
                     sock.bottom < hamper.bottom &&
                     sock.velocityY > 0) { // checks if the sock is falling down into the hamper
-                    resetSock();
+                    socks.splice(0, 1);
+                    resetSock(sock);
                 }
             }
-
-            // Draw aiming line if aiming
-            if (isAiming) {
-                girl.x = sock.left;
-                image(girlHolding, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
-                drawTrajectory();
-            }
-            else {
-                image(sockImg, sock.left, sock.top, sock.width, sock.height);
-            }
-            if (inAir) {
-                image(girlEmpty, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
-            }
-
-            image(hamperImg, hamper.left, hamper.top, hamper.width, hamper.height);
-
-            if (hamperCheck === '0') {
-                document.getElementById("returnButton").style.display = "block";
-            } else {
-
-            }
-
         }
 
         // Function to draw the trajectory as a dotted line
-        function drawTrajectory() {
+        function drawTrajectory(sock) {
             let steps = 50; // Number of steps in the trajectory
             let timeStep = 1; // Time step for simulation
             let posX = sock.left + sock.width / 2, posY = sock.top + sock.height / 2;
-            let velX = max(min((mouseX - sock.left - sock.width / 2) * 0.1, maxPower), -maxPower);
-            let velY = max((mouseY - sock.top - sock.height / 2) * 0.1, -maxPower);
+            let velX = max(min((mouseX - sock.left - sock.width / 2) * 0.1, maxPowerX), -maxPowerX);
+            let velY = max((mouseY - sock.top - sock.height / 2) * 0.1, -maxPowerY);
 
             stroke(255, 255, 255);
             strokeWeight(4);
@@ -250,28 +339,28 @@
         }
 
         // Reset sock to starting position and make it visible
-        function resetSock() {
+        function resetSock(sock) {
             sock.left = 250 * refScale;
             sock.top = height - 220 * refScale;
             sock.velocityX = 0;
             sock.velocityY = 0;
-            sock.visible = true; // Ensure sock is visible when reset
         }
 
         // Mouse functions for aiming and shooting
         function mousePressed() {
-            if (!inAir) {
+            if (!socks[0].inAir && hamperCheck != '0') {
                 isAiming = true;
             }
         }
 
         function mouseReleased() {
             if (isAiming) {
-                let aimVector = createVector(mouseX - sock.left - sock.width / 2, mouseY - sock.top - sock.height / 2);
-                sock.velocityX = max(min(aimVector.x * 0.1, maxPower), -maxPower);
-                sock.velocityY = max(aimVector.y * 0.1, -maxPower);
+                let aimVector = createVector(mouseX - socks[0].left - socks[0].width / 2,
+                    mouseY - socks[0].top - socks[0].height / 2);
+                socks[0].velocityX = max(min(aimVector.x * 0.1, maxPowerX), -maxPowerX);
+                socks[0].velocityY = max(aimVector.y * 0.1, -maxPowerY);
             }
-            inAir = true;
+            socks[0].inAir = true;
             isAiming = false;
         }
 
