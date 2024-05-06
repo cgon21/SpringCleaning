@@ -84,17 +84,17 @@
     <button id="return">Return to Room</button>
 
     <script>
-        var dusterCheck = localStorage.getItem('hamperCheck');
+        var dusterCheck = localStorage.getItem('sodaCheck');
 
         let bottomLeft;
-        let hamper;
+        let recycling;
         let convo = 0;
         let refScale;
 
         // Preload all images
         function preload() {
-            bottomLeft = loadImage('sprites/characters/hamperBackground.png');
-            hamper = loadImage('sprites/characters/hamper.png');
+            bottomLeft = loadImage('sprites/characters/recycleBackground.png');
+            recycling = loadImage('sprites/characters/recycle.png');
         }
 
         function setup() {
@@ -136,7 +136,7 @@
         function draw() {
             clear();
             background(bottomLeft); // set the background every frame
-            image(hamper, width / 2 - hamper.width / 8 * refScale, height - hamper.height / 3 * refScale, hamper.width / 4 * refScale, hamper.height / 4 * refScale);
+            image(recycling, width / 2 - recycling.width / 8 * refScale, height - recycling.height / 3 * refScale, recycling.width / 4 * refScale, recycling.height / 4 * refScale);
 
             switch (convo) {
                 case 0:
@@ -161,7 +161,7 @@
                 document.getElementById("askNice").style.display = "none";
                 document.getElementById("askMean").style.display = "none";
                 document.getElementById("return").style.display = "block";
-                localStorage.setItem('hamperCheck', '1');
+                localStorage.setItem('sodaCheck', '1');
             });
         });
         document.addEventListener("DOMContentLoaded", function () {
