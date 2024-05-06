@@ -2,20 +2,159 @@
 <html lang="en">
 
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <meta charset="utf-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Menu</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #start {
+      display: block;
+      position: fixed;
+      top: 88%;
+      left: 50%;
+      transform: translate(-50%);
+      padding: 2vmin;
+      font-size: 3vmin;
+      color: white;
+      background-color: black;
+      border: none;
+      border-radius: 3vmin;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    #start:hover {
+      background-color: pink;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="startScreen" class="start-screen">
-    <h1>WIP Game</h1>
-    <button id="startButton">START</button>
-  </div>
-  <main>
-  </main>
-  <script src="sketch.js"></script>
+  <button id="start">Start</button>
+
+  <script>
+    let room;
+    let dusterImg, recyclingImg, hamperImg;
+    let duster, recycling, hamper;
+
+    let refScale;
+
+    // Preload all images
+    function preload() {
+      room = loadImage('sprites/room/room.png');
+      dusterImg = loadImage('sprites/room/dusterIRL.png');
+      hamperImg = loadImage('sprites/room/hamperIRL.png');
+      recyclingImg = loadImage('sprites/room/recyclingBin.png');
+    }
+
+    function setup() {
+      refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
+
+      let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+      let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+      width = room.width * refScale;
+      height = room.height * refScale;
+      calculatePositions();
+
+      canvas = createCanvas(width, height).attribute('willReadFrequently', true);
+      canvas.position(canvasX, canvasY);
+    }
+
+    function windowResized() {
+      refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
+      let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+      let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+      width = room.width * refScale;
+      height = room.height * refScale;
+      resizeCanvas(width, height);
+      calculatePositions();
+      canvas.position(canvasX, canvasY);
+    }
+
+    function calculatePositions() {
+      hamper = {
+        left: width / 2 - 100 * refScale,
+        top: height - 410 * refScale,
+        width: hamperImg.width / 1.5 * refScale,
+        height: hamperImg.height / 1.5 * refScale
+      };
+      hamper.left -= hamper.width / 2;
+      hamper.top -= hamper.height / 2;
+      hamper.right = hamper.left + hamper.width;
+      hamper.bottom = hamper.top + hamper.height;
+
+      duster = {
+        x: width / 2 - + 80 * refScale,
+        y: -390 * refScale,
+        left: width / 2,
+        right: width,
+        top: height - 400 * refScale,
+        bottom: height - 400 * refScale + 280 * refScale,
+        width: dusterImg.width / 2.3 * refScale,
+        height: dusterImg.height / 2.3 * refScale
+      };
+      duster.left -= duster.width / 2;
+
+      recycling = {
+        left: width / 2 + 100,
+        top: 370 * refScale,
+        width: recyclingImg.width / 2.6 * refScale,
+        height: recyclingImg.height / 2.6 * refScale
+      };
+      recycling.left -= recycling.width / 2;
+
+      recycling.right = recycling.left + recycling.width;
+      recycling.bottom = recycling.top + recycling.height;
+
+    }
+
+    function draw() {
+      clear();
+      background('tan'); // set the background every frame
+
+      image(hamperImg, hamper.left, hamper.top, hamper.width, hamper.height);
+      image(recyclingImg, recycling.left, recycling.top, recycling.width, recycling.height);
+
+      // Transformations and drawing scaled images
+      push();
+      translate(width / 2 + 680 * refScale, height / 2 + 180 * refScale);
+      rotate(PI * 1.1);
+      image(dusterImg, duster.x, duster.y, duster.width, duster.height);
+      pop();
+
+      styledText("Spring Cleaning", width / 2, height / 4);
+
+    }
+
+    function styledText(string, x, y) {
+      stroke(0, 0, 0);
+      strokeWeight(5);
+      sizeOfText = 130 * refScale;
+      textSize(sizeOfText);
+      textStyle(BOLD);
+      textAlign(CENTER);
+      textFont('Papyrus');
+      fill(255);
+      text(string, x, y);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var startButton = document.getElementById('start');
+      startButton.addEventListener('click', function () {
+        window.location.href = 'room.html';
+      });
+    });
+
+  </script>
 </body>
 
 </html>
