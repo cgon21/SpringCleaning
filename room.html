@@ -15,10 +15,32 @@
         canvas {
             display: block;
         }
+
+        #quit {
+            display: block;
+            position: fixed;
+            top: 88%;
+            left: 50%;
+            transform: translate(-50%);
+            padding: 2vmin;
+            font-size: 3vmin;
+            color: white;
+            background-color: black;
+            border: none;
+            border-radius: 3vmin;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #quit:hover {
+            background-color: pink;
+        }
     </style>
 </head>
 
 <body>
+    <button id="quit">Quit</button>
+
     <script>
         let dusterCheck;
         if (dusterCheck === null) {
@@ -39,6 +61,7 @@
         sodaCheck = localStorage.getItem('sodaCheck');
 
         // Reset
+
         // localStorage.setItem('hamperCheck', '0');
         // localStorage.setItem('dusterCheck', '0');
         // localStorage.setItem('sodaCheck', '0');
@@ -252,6 +275,16 @@
                 }
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var quitButton = document.getElementById('quit');
+            quitButton.addEventListener('click', function () {
+                localStorage.setItem('hamperCheck', '0');
+                localStorage.setItem('dusterCheck', '0');
+                localStorage.setItem('sodaCheck', '0');
+                window.location.href = 'index.html';
+            });
+        });
     </script>
 </body>
 

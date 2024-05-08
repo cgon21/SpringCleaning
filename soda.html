@@ -41,43 +41,34 @@
 <body>
     <button id="returnButton">Return to Room</button>
     <script>
-        var hamperCheck = localStorage.getItem('hamperCheck');
+        var sodaCheck = localStorage.getItem('sodaCheck');
 
-        let court;
-        let sockImg, hamperSock, hamper, hamperImg, girl, girlEmpty, girlHolding;
-        let socks = [];
-        const num = 6;
+        let circus;
+        let defaultSoda, sodaImg, recycle, recycleImg, cannon, cannonImg;
+        let sodas = [];
 
         let gravity;
-        let isAiming = false;
-        let aimPower = 0;
-        let aimAngle = 0;
-        let maxPowerX;
-        let maxPowerY;
-
         let refScale;
         let width;
         let height;
-        let bounce = false;
 
         // Preload all images
         function preload() {
-            court = loadImage('sprites/miniGames/court.png');
-            sockImg = loadImage("sprites/enemies/sock.png");
-            hamperImg = loadImage("sprites/miniGames/hamperCourt.png");
-            girlEmpty = loadImage("sprites/miniGames/hamperShot.png");
-            girlHolding = loadImage("sprites/miniGames/hamperSock.png");
+            sodaImg = loadImage('sprites/enemies/soda.png');
+            recycleImg = loadImage('sprites/room/recyclingBin.png');
+            cannonImg = loadImage('sprites/miniGames/cannon.png');
+            circus = loadImage('sprites/miniGames/circus.png');
         }
 
         function setup() {
             frameRate(60);
 
-            refScale = Math.min(windowWidth / court.width, windowHeight / court.height);
+            refScale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
 
-            let canvasX = (windowWidth / 2) - (court.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (court.height / 2) * refScale;
-            width = court.width * refScale;
-            height = court.height * refScale;
+            let canvasX = (windowWidth / 2) - (circus.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (circus.height / 2) * refScale;
+            width = circus.width * refScale;
+            height = circus.height * refScale;
 
             canvas = createCanvas(width, height);
             canvas.position(canvasX, canvasY);
@@ -89,11 +80,11 @@
         }
 
         function windowResized() {
-            refScale = Math.min(windowWidth / court.width, windowHeight / court.height);
-            let canvasX = (windowWidth / 2) - (court.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (court.height / 2) * refScale;
-            width = court.width * refScale;
-            height = court.height * refScale;
+            refScale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
+            let canvasX = (windowWidth / 2) - (circus.width / 2) * refScale;
+            let canvasY = (windowHeight / 2) - (circus.height / 2) * refScale;
+            width = circus.width * refScale;
+            height = circus.height * refScale;
 
             resizeCanvas(width, height);
             calculatePositions()
@@ -105,121 +96,69 @@
             maxPowerX = 19 * refScale;
             maxPowerY = 29 * refScale;
 
-            hamper = {
+            recycle = {
                 left: width - 680 * refScale,
-                right: width - 680 * refScale + hamperImg.width / 2 * refScale,
+                top: 710 * refScale,
+                width: recycleImg.width / 3.5 * refScale,
+                height: recycleImg.height / 3.5 * refScale
+            };
+            recycle.left = width / 2 - recycle.width / 2;
+            recycle.right = recycle.left + recycle.width;
+            recycle.bottom = recycle.top + recycle.height;
+
+            cannon = {
+                left: width / 2,
+                top: height / 2 - 90 * refScale,
+                width: cannonImg.width / 6 * refScale,
+                height: cannonImg.height / 6 * refScale,
+                velocityX: 0
+            };
+            cannon.left = width / 2 - cannon.width / 2;
+            cannon.right = cannon.left + cannon.width;
+            cannon.bottom = cannon.top + cannon.height;
+
+            defaultSoda = {
+                left: width - 680 * refScale,
                 top: 270 * refScale,
-                bottom: 270 * refScale + hamperImg.height / 2 * refScale,
-                width: hamperImg.width / 2 * refScale,
-                height: hamperImg.height / 2 * refScale
+                width: sodaImg.width / 5 * refScale,
+                height: sodaImg.height / 5 * refScale
             };
+            defaultSoda.right = defaultSoda.left + defaultSoda.width;
+            defaultSoda.bottom = defaultSoda.top + defaultSoda.height;
 
-            girl = {
-                x: 250 * refScale,
-                y: height - 470 * refScale,
-                width: girlEmpty.width / 2 * refScale,
-                height: girlEmpty.height / 2 * refScale
-            };
-
-            hamperSock = {
-                left: 250 * refScale,
-                right: 250 * refScale + sockImg.width / 5 * refScale,
-                top: height - 220 * refScale,
-                bottom: height - 220 * refScale + sockImg.height / 5 * refScale,
-                width: sockImg.width / 5 * refScale,
-                height: sockImg.height / 5 * refScale,
-                velocityX: 0,
-                velocityY: 0,
-                inAir: false,
-            };
-
-            for (let i = 0; i < num; i++) {
-                socks[i] = {
-                    left: 100 * refScale + i * (sockImg.width / 5 * refScale) * 1.15,
-                    right: 250 * refScale + sockImg.width / 5 * refScale,
-                    top: height - 220 * refScale,
-                    bottom: height - 220 * refScale + sockImg.height / 5 * refScale,
-                    width: sockImg.width / 5 * refScale,
-                    height: sockImg.height / 5 * refScale,
+            for (let i = 0; i < 10; i++) {
+                sodas[i] = {
+                    left: width - 680 * refScale,
+                    top: 270 * refScale,
+                    width: sodaImg.width / 5 * refScale,
+                    height: sodaImg.height / 5 * refScale,
                     velocityX: 0,
-                    velocityY: 0,
-                    inAir: false,
+                    velocityY: 0
                 };
-                if (hamperCheck < 1) {
-                    socks[i].left = i * (sockImg.width / 5 * refScale) * 1.15;
-                }
+                sodas[i].right = sodas[i].left + sodas[i].width;
+                sodas[i].bottom = sodas[i].top + sodas[i].height;
             }
         }
 
         function draw() {
-            background(court); // set the background every frame
+            background(circus); // set the background every frame
+            image(recycleImg, mouseX - recycle.width / 2, recycle.top, recycle.width, recycle.height);
+            image(sodaImg, defaultSoda.left, defaultSoda.top, defaultSoda.width, defaultSoda.height);
+            image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
 
-            // hamperCheck = '0';
-            if (hamperCheck === '0') {
-                // Hamper is not present
-                socks.forEach(sock => {
-                    sockMovement(sock);
-                    checkCollisions(sock);
-                    let check = Math.random(1);
-                    if (!sock.inAir && check > 0.985) {
-                        let aimVector = createVector((hamper.left - sock.left + sock.width / 2) / 5,
-                            (hamper.top + hamper.height / 2 - sock.top - sock.height / 2) / 5);
-                        sock.velocityX = Math.random() * (5 * refScale - (-5 * refScale)) + (-5 * refScale);
-                        sock.velocityY = Math.random() * (-1 * refScale - (-5 * refScale)) + (-5 * refScale);
-                        sock.inAir = true;
-                    }
-                    image(sockImg, sock.left, sock.top, sock.width, sock.height);
-                })
-                document.getElementById("returnButton").style.display = "block";
-            }
 
-            // Hamper is here
-            else {
-                bounce = true;
-                socks.forEach(sock => {
-                    sockMovement(sock);
-                    checkCollisions(sock);
-                    if (sock != socks[0]) {
-                        let check = Math.random(1);
-                        if (!sock.inAir && check > 0.985) {
-                            let aimVector = createVector((hamper.left - sock.left + sock.width / 2) / 5,
-                                (hamper.top + hamper.height / 2 - sock.top - sock.height / 2) / 5);
-                            sock.velocityX = Math.random() * (8 * refScale - (-8 * refScale)) + (-8 * refScale);
-                            sock.velocityY = Math.random() * (-1 * refScale - (-8 * refScale)) + (-8 * refScale);
-                            sock.inAir = true;
-                        }
 
-                        image(sockImg, sock.left, sock.top, sock.width, sock.height);
-                    }
-                    else {
-                        if (isAiming) {
-                            girl.x = sock.left;
-                            image(girlHolding, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
-                            drawTrajectory(sock);
-                        }
-                        else if (sock) {
-                            image(sockImg, sock.left, sock.top, sock.width, sock.height);
-                            if (sock.inAir) {
-                                image(girlEmpty, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
-                            }
-                        }
-                    }
-                })
-
-                // socks all clean
-                if (socks.length < 1) {
-                    styledText("Laundry", width / 3.5, height / 3);
-                    styledText("Picked Up!", width / 3.5, height / 1.9);
-                    localStorage.setItem('hamperCheck', '2');
-                    document.getElementById("returnButton").style.display = "block";
-
-                    image(sockImg, hamper.left, hamper.top - hamperSock.height / 2, hamperSock.width, hamperSock.height);
-                    image(sockImg, hamper.right - hamperSock.width, hamper.top - hamperSock.height / 2, hamperSock.width, hamperSock.height);
-                    image(sockImg, hamper.left + (hamper.right - hamperSock.width - hamper.left) / 2, hamper.top - hamperSock.height / 1.4, hamperSock.width, hamperSock.height);
+            sodas.forEach(soda => {
+                if (soda.y > height) {
+                    // Math.random() * (max - min) + min;
+                    soda.left = Math.floor(Math.random() * ((width - soda.width) - 0) + 0);
+                    soda.top = -soda.height;
                 }
-                image(hamperImg, hamper.left, hamper.top, hamper.width, hamper.height);
-            }
-
+                sock.left += sock.velocityX;
+                sock.right = sock.left + sock.width;
+                sock.top += sock.velocityY;
+                sock.bottom = sock.top + sock.height;
+            })
         }
 
         function styledText(string, x, y) {
@@ -233,143 +172,6 @@
             fill(255);
             text(string, x, y);
         }
-
-        function sockMovement(sock) {
-            // Update sock position based on its velocity
-            sock.left += sock.velocityX;
-            sock.right = sock.left + sock.width;
-            sock.top += sock.velocityY;
-            sock.bottom = sock.top + sock.height;
-
-            // Apply gravity to the sock's vertical movement
-            if (sock.inAir) {
-                sock.velocityY += gravity;
-            }
-            // Collision detection between the sock and the ground
-            if (sock.top > height - 250 * refScale) {
-                // Make the sock bounce a bit before stopping
-                if (bounce == true && (abs(sock.velocityX) > 1.5 * refScale || abs(sock.velocityY) > 1.5 * refScale)) {
-                    sock.velocityY = -sock.velocityY / 1.5 * refScale;
-                    sock.velocityX = sock.velocityX / 1.5 * refScale;
-                }
-                // Stop the sock completely
-                else {
-                    sock.top = height - 250 * refScale;
-                    sock.velocityY = 0;
-                    sock.velocityX = 0;
-                    sock.inAir = false;
-                }
-            }
-        }
-
-        function checkCollisions(sock) {
-            // Check if the sock is off screen
-            if (!onScreen(sock)) {
-                // sock is on right of screen
-                if (sock.x > width / 2) {
-                    sock.x = 2 * refScale;
-                }
-                // sock is on left of screen
-                else {
-                    sock.x = width - 2 * refScale;
-                }
-                sock.velocityX = -sock.velocityX * .9;
-            }
-
-            // within top and bottom
-            if (sock.bottom > hamper.top + sock.width / 2 && sock.top < hamper.bottom) {
-                // Check if sock hits left side of hamper
-                if (sock.right > hamper.left && // right of sock inside hamper
-                    sock.left < hamper.left && // left of sock outside hamper
-                    sock.velocityX > 0) { // moving right
-                    sock.velocityX = -sock.velocityX * .9; // negate x direction
-                    sock.velocityY += 0.5;
-                }
-                // Check if sock hits right side of hamper
-                else if (sock.left < hamper.right && // left of sock inside hamper
-                    sock.right > hamper.right && // Right of sock outside hamper
-                    sock.velocityX < 0) { // moving left
-                    sock.velocityX = -sock.velocityX * .9; // negate x direction
-                    sock.velocityY += 0.5;
-                }
-            }
-
-            // within right and left 
-            if (sock.right - sock.width / 2 > hamper.left && sock.left + sock.width / 2 < hamper.right) {
-                // Check if sock hits bottom of hamper
-                if (sock.top < hamper.bottom && // top of sock inside hamper
-                    sock.bottom > hamper.bottom && // bottom of sock outside hamper
-                    sock.velocityY < 0) { // moving up
-                    sock.velocityY = -sock.velocityY * .9;
-                }
-                // Check if sock lands in hamper
-                else if (sock.bottom - sock.height / 2 > hamper.top && // half of sock inside hamper
-                    sock.bottom < hamper.bottom &&
-                    sock.velocityY > 0) { // checks if the sock is falling down into the hamper
-                    socks.splice(0, 1);
-                    resetSock(sock);
-                }
-            }
-        }
-
-        // Function to draw the trajectory as a dotted line
-        function drawTrajectory(sock) {
-            let steps = 50; // Number of steps in the trajectory
-            let timeStep = 1; // Time step for simulation
-            let posX = sock.left + sock.width / 2, posY = sock.top + sock.height / 2;
-            let velX = max(min((mouseX - sock.left - sock.width / 2) * 0.1, maxPowerX), -maxPowerX);
-            let velY = max((mouseY - sock.top - sock.height / 2) * 0.1, -maxPowerY);
-
-            stroke(255, 255, 255);
-            strokeWeight(4);
-            for (let i = 4; i < steps; i++) {
-                let oldX = posX, oldY = posY;
-                velY += gravity * timeStep; // Apply gravity
-                posX += velX * timeStep;
-                posY += velY * timeStep;
-
-                // Draw a dot at the current position
-                point(posX, posY);
-            }
-        }
-
-        // Check if the sock is still on the screen
-        function onScreen(sock) {
-            return sock.left >= 0 && sock.right <= width;
-        }
-
-        // Reset sock to starting position and make it visible
-        function resetSock(sock) {
-            sock.left = 250 * refScale;
-            sock.top = height - 220 * refScale;
-            sock.velocityX = 0;
-            sock.velocityY = 0;
-        }
-
-        // Mouse functions for aiming and shooting
-        function mousePressed() {
-            if (!socks[0].inAir && hamperCheck != '0') {
-                isAiming = true;
-            }
-        }
-
-        function mouseReleased() {
-            if (isAiming) {
-                let aimVector = createVector(mouseX - socks[0].left - socks[0].width / 2,
-                    mouseY - socks[0].top - socks[0].height / 2);
-                socks[0].velocityX = max(min(aimVector.x * 0.1, maxPowerX), -maxPowerX);
-                socks[0].velocityY = max(aimVector.y * 0.1, -maxPowerY);
-            }
-            socks[0].inAir = true;
-            isAiming = false;
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            var returnButton = document.getElementById('returnButton');
-            returnButton.addEventListener('click', function () {
-                window.location.href = 'room.html';
-            });
-        });
 
     </script>
 </body>
