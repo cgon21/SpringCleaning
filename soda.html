@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dirty Laundry</title>
+    <title>Soda Cans</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <style>
         body {
@@ -46,6 +46,7 @@
         let circus;
         let defaultSoda, sodaImg, recycle, recycleImg, cannon, cannonImg;
         let sodas = [];
+        let index = 0;
 
         let gravity;
         let refScale;
@@ -111,9 +112,11 @@
                 top: height / 2 - 90 * refScale,
                 width: cannonImg.width / 6 * refScale,
                 height: cannonImg.height / 6 * refScale,
-                velocityX: 0
+                scale: 1.005,
+                count: 0
             };
             cannon.left = width / 2 - cannon.width / 2;
+            cannon.top = height / 2 - cannon.height / 2;
             cannon.right = cannon.left + cannon.width;
             cannon.bottom = cannon.top + cannon.height;
 
@@ -130,10 +133,11 @@
                 sodas[i] = {
                     left: width - 680 * refScale,
                     top: 270 * refScale,
-                    width: sodaImg.width / 5 * refScale,
-                    height: sodaImg.height / 5 * refScale,
+                    width: sodaImg.width / 25 * refScale,
+                    height: sodaImg.height / 25 * refScale,
                     velocityX: 0,
-                    velocityY: 0
+                    velocityY: 0,
+                    launched: -1
                 };
                 sodas[i].right = sodas[i].left + sodas[i].width;
                 sodas[i].bottom = sodas[i].top + sodas[i].height;
@@ -142,24 +146,89 @@
 
         function draw() {
             background(circus); // set the background every frame
-            image(recycleImg, mouseX - recycle.width / 2, recycle.top, recycle.width, recycle.height);
-            image(sodaImg, defaultSoda.left, defaultSoda.top, defaultSoda.width, defaultSoda.height);
+
+            if (index > sodas.length) {
+                index = 0;
+            }
+
+            if (cannon.width > cannonImg.width / 6 * refScale && cannon.scale == 1.005) {
+                cannon.scale = 0.995;
+                cannon.count++;
+                if (cannon.count == 3) {
+                    cannon.count = 0;
+                    sodas[index].launched = 0;
+                    index++;
+                }
+            }
+            if (cannon.width < cannonImg.width / 7.5 * refScale && cannon.scale == 0.995) {
+                cannon.scale = 1.005;
+            }
+            cannon.width *= cannon.scale;
+            cannon.height *= cannon.scale;
+            cannon.left = width / 2 - cannon.width / 2;
+            cannon.top = height / 2 - cannon.height / 2;
+
             image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
 
-
+            recycle.left = mouseX - recycle.width / 2;
+            image(recycleImg, recycle.left, recycle.top, recycle.width, recycle.height);
 
             sodas.forEach(soda => {
-                if (soda.y > height) {
-                    // Math.random() * (max - min) + min;
-                    soda.left = Math.floor(Math.random() * ((width - soda.width) - 0) + 0);
-                    soda.top = -soda.height;
+                // just getting launched out of cannon - spawn on the cannon hole
+                if (soda.launched == 0) {
+                    soda.width = sodaImg.width / 25 * refScale;
+                    soda.height = sodaImg.height / 25 * refScale;
+                    soda.left = width / 2 - soda.width / 2;
+                    soda.top = cannon.top;
+                    soda.right = soda.left + soda.width;
+                    soda.bottom = soda.top + soda.height;
+                    soda.launched = 1;
                 }
-                sock.left += sock.velocityX;
-                sock.right = sock.left + sock.width;
-                sock.top += sock.velocityY;
-                sock.bottom = sock.top + sock.height;
-            })
+
+                // spawned infront of cannon and need to move upwards
+                else if (soda.launched == 1) {
+                    soda.velocityY = -5 * refScale; // soda moves upwards
+                    // Check if soda has gone past the top border
+                    if (soda.bottom < 0) {
+                        soda.launched = 2;
+                        soda.left = Math.random() * ((width - soda.width));
+                        soda.right = soda.left + soda.width;
+                        soda.top = -2 * soda.height;
+                        soda.bottom = soda.top + soda.height;
+                    }
+                }
+                else if (soda.launched == 2) {
+                    soda.width = sodaImg.width / 10 * refScale;
+                    soda.height = sodaImg.height / 10 * refScale;
+                    soda.velocityY = 2 * refScale;
+                    checkLanding(soda);
+                    if (soda.top > height) {
+                        soda.launched = 0;
+                    }
+                }
+
+                soda.left += soda.velocityX;
+                soda.right = soda.left + soda.width;
+                soda.top += soda.velocityY;
+                soda.bottom = soda.top + soda.height;
+                if (soda.launched > 0) {
+                    image(sodaImg, soda.left, soda.top, soda.width, soda.height);
+                }
+            });
         }
+
+        function checkLanding(soda) {
+            // within right and left 
+            if (soda.right - soda.width / 2 > recycle.left && soda.left + soda.width / 2 < recycle.right) {
+                // Check if soda lands in recycle
+                if (soda.bottom - soda.height / 2 > recycle.top && // half of soda inside recycle
+                    soda.bottom < recycle.bottom &&
+                    soda.velocityY > 0) { // checks if the soda is falling down into the recycle
+                    sodas.splice(0, 1);
+                }
+            }
+        }
+
 
         function styledText(string, x, y) {
             stroke(0, 0, 0);
