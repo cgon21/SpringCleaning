@@ -129,7 +129,7 @@
             defaultSoda.right = defaultSoda.left + defaultSoda.width;
             defaultSoda.bottom = defaultSoda.top + defaultSoda.height;
 
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 3; i++) {
                 sodas[i] = {
                     left: width - 680 * refScale,
                     top: 270 * refScale,
@@ -147,7 +147,7 @@
         function draw() {
             background(circus); // set the background every frame
 
-            if (index > sodas.length) {
+            if (index >= sodas.length) {
                 index = 0;
             }
 
@@ -156,8 +156,12 @@
                 cannon.count++;
                 if (cannon.count == 3) {
                     cannon.count = 0;
-                    sodas[index].launched = 0;
-                    index++;
+                    if (sodas.length > 0) {
+                        if (sodas[index].launched == -1) {
+                            sodas[index].launched = 0;
+                            index++;
+                        }
+                    }
                 }
             }
             if (cannon.width < cannonImg.width / 7.5 * refScale && cannon.scale == 0.995) {
@@ -203,7 +207,7 @@
                     soda.velocityY = 2 * refScale;
                     checkLanding(soda);
                     if (soda.top > height) {
-                        soda.launched = 0;
+                        soda.launched = -1;
                     }
                 }
 
@@ -218,12 +222,11 @@
         }
 
         function checkLanding(soda) {
-            // within right and left 
-            if (soda.right - soda.width / 2 > recycle.left && soda.left + soda.width / 2 < recycle.right) {
-                // Check if soda lands in recycle
-                if (soda.bottom - soda.height / 2 > recycle.top && // half of soda inside recycle
-                    soda.bottom < recycle.bottom &&
-                    soda.velocityY > 0) { // checks if the soda is falling down into the recycle
+            // within left and right of bin
+            if (soda.left > recycle.left && soda.right < recycle.right && soda.top < recycle.top) {
+                // caught
+                if (soda.bottom > recycle.top && soda.velocityY > 0) {
+                    // Check if soda lands in recycle
                     sodas.splice(0, 1);
                 }
             }
