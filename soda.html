@@ -46,6 +46,7 @@
         let circus;
         let defaultSoda, sodaImg, recycle, recycleImg, cannon, cannonImg;
         let sodas = [];
+        let sodasToDisplay = [];
         let index = 0;
 
         let gravity;
@@ -100,8 +101,8 @@
             recycle = {
                 left: width - 680 * refScale,
                 top: 710 * refScale,
-                width: recycleImg.width / 3.5 * refScale,
-                height: recycleImg.height / 3.5 * refScale
+                width: recycleImg.width / 2.1 * refScale,
+                height: recycleImg.height / 2.1 * refScale
             };
             recycle.left = width / 2 - recycle.width / 2;
             recycle.right = recycle.left + recycle.width;
@@ -129,7 +130,7 @@
             defaultSoda.right = defaultSoda.left + defaultSoda.width;
             defaultSoda.bottom = defaultSoda.top + defaultSoda.height;
 
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 15; i++) {
                 sodas[i] = {
                     left: width - 680 * refScale,
                     top: 270 * refScale,
@@ -137,101 +138,160 @@
                     height: sodaImg.height / 25 * refScale,
                     velocityX: 0,
                     velocityY: 0,
+                    rotation: 0,
+                    angle: 0.05,
                     launched: -1
                 };
                 sodas[i].right = sodas[i].left + sodas[i].width;
                 sodas[i].bottom = sodas[i].top + sodas[i].height;
             }
+
+            sodasToDisplay = [
+                { x: 1000, y: 530, y_initial: 530, scale: 0.4, inAir: false, velocityY: 0 },
+                { x: 400, y: 550, y_initial: 550, scale: 0.5, inAir: false, velocityY: 0 },
+                { x: 900, y: 600, y_initial: 600, scale: 0.6, inAir: false, velocityY: 0 },
+                { x: 1100, y: 625, y_initial: 625, scale: 0.7, inAir: false, velocityY: 0 },
+                { x: 700, y: 650, y_initial: 650, scale: 0.8, inAir: false, velocityY: 0 },
+                { x: 100, y: 700, y_initial: 700, scale: 0.9, inAir: false, velocityY: 0 },
+                { x: 1200, y: 725, y_initial: 725, scale: 1.0, inAir: false, velocityY: 0 },
+                { x: 900, y: 745, y_initial: 745, scale: 1.1, inAir: false, velocityY: 0 },
+                { x: 400, y: 745, y_initial: 745, scale: 1.3, inAir: false, velocityY: 0 }
+            ];
         }
 
         function draw() {
             background(circus); // set the background every frame
 
-            if (index >= sodas.length) {
-                index = 0;
-            }
-
-            if (cannon.width > cannonImg.width / 6 * refScale && cannon.scale == 1.005) {
-                cannon.scale = 0.995;
-                cannon.count++;
-                if (cannon.count == 3) {
-                    cannon.count = 0;
-                    if (sodas.length > 0) {
-                        if (sodas[index].launched == -1) {
-                            sodas[index].launched = 0;
-                            index++;
+            if (sodaCheck === '0') {
+                image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
+                sodasToDisplay.forEach(soda => {
+                    sodaMovement(soda);
+                    let check = Math.random(1);
+                    if (!soda.inAir && check > 0.985) {
+                        soda.velocityY = Math.random() * (-3 * refScale - (-17 * refScale)) + (-17 * refScale);
+                        soda.inAir = true;
+                    }
+                    image(sodaImg, soda.x * refScale, soda.y * refScale, defaultSoda.width * soda.scale, defaultSoda.height * soda.scale);
+                });
+                document.getElementById("returnButton").style.display = "block";
+            } else {
+                if (sodas.length < 1) {
+                    image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
+                    styledText("Cans Recycled!", width / 2, height / 2.7);
+                    localStorage.setItem('sodaCheck', '2');
+                    document.getElementById("returnButton").style.display = "block";
+                }
+                else {
+                    if (cannon.width > cannonImg.width / 6 * refScale && cannon.scale == 1.005) {
+                        cannon.scale = 0.995;
+                        cannon.count++;
+                        if (cannon.count == 2) {
+                            cannon.count = 0;
+                            launchSoda();
                         }
                     }
+                    if (cannon.width < cannonImg.width / 7.5 * refScale && cannon.scale == 0.995) {
+                        cannon.scale = 1.005;
+                    }
+                    cannon.width *= cannon.scale;
+                    cannon.height *= cannon.scale;
+                    cannon.left = width / 2 - cannon.width / 2;
+                    cannon.top = height / 2 - cannon.height / 2;
+
+                    image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
+
+                    recycle.left = mouseX - recycle.width / 2;
+                    recycle.right = recycle.left + recycle.width;
+                    image(recycleImg, recycle.left, recycle.top, recycle.width, recycle.height);
+
+                    sodas.forEach(soda => {
+
+                        // just getting launched out of cannon - spawn on the cannon hole
+                        if (soda.launched == 0) {
+                            soda.width = sodaImg.width / 25 * refScale;
+                            soda.height = sodaImg.height / 25 * refScale;
+                            soda.left = width / 2 - soda.width / 2;
+                            soda.top = cannon.top;
+                            soda.right = soda.left + soda.width;
+                            soda.bottom = soda.top + soda.height;
+                            soda.launched = 1;
+                        }
+                        // spawned infront of cannon and need to move upwards
+                        else if (soda.launched == 1) {
+                            soda.velocityY = -8 * refScale; // soda moves upwards
+                            // Check if soda has gone past the top border
+                            if (soda.bottom < -sodaImg.width / 6 * refScale) {
+                                soda.launched = 2;
+                                soda.width = sodaImg.width / 6 * refScale;
+                                soda.height = sodaImg.height / 6 * refScale;
+                                if (Math.random() < 0.5) {
+                                    soda.left = Math.random() * ((width / 2 - soda.width / 2) - soda.width) + soda.width;
+                                } else {
+                                    soda.left = Math.random() * ((width - soda.width) - (width / 2 + soda.width / 2)) + (width / 2 + soda.width / 2);
+                                }
+                                soda.right = soda.left + soda.width;
+                            }
+                        }
+                        // soda is falling
+                        else if (soda.launched == 2) {
+                            soda.velocityY = 6 * refScale;
+                            checkLanding(soda);
+                            if (soda.top > height) {
+                                soda.launched = -1;
+                            }
+                        }
+
+                        if (soda.launched > 0) {
+                            soda.left += soda.velocityX;
+                            soda.right = soda.left + soda.width;
+                            soda.top += soda.velocityY;
+                            soda.bottom = soda.top + soda.height;
+                            soda.rotation += soda.angle;
+                            push();
+                            translate(soda.left + soda.width / 2, soda.top + soda.height / 2);
+                            rotate(soda.rotation);
+                            imageMode(CENTER);
+                            image(sodaImg, 0, 0, soda.width, soda.height);
+                            pop();
+                        }
+                    });
                 }
             }
-            if (cannon.width < cannonImg.width / 7.5 * refScale && cannon.scale == 0.995) {
-                cannon.scale = 1.005;
+        }
+
+        function launchSoda() {
+            let soda = sodas.find(soda => soda.launched === -1);
+            if (soda) {
+                soda.launched = 0;
             }
-            cannon.width *= cannon.scale;
-            cannon.height *= cannon.scale;
-            cannon.left = width / 2 - cannon.width / 2;
-            cannon.top = height / 2 - cannon.height / 2;
-
-            image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
-
-            recycle.left = mouseX - recycle.width / 2;
-            image(recycleImg, recycle.left, recycle.top, recycle.width, recycle.height);
-
-            sodas.forEach(soda => {
-                // just getting launched out of cannon - spawn on the cannon hole
-                if (soda.launched == 0) {
-                    soda.width = sodaImg.width / 25 * refScale;
-                    soda.height = sodaImg.height / 25 * refScale;
-                    soda.left = width / 2 - soda.width / 2;
-                    soda.top = cannon.top;
-                    soda.right = soda.left + soda.width;
-                    soda.bottom = soda.top + soda.height;
-                    soda.launched = 1;
-                }
-
-                // spawned infront of cannon and need to move upwards
-                else if (soda.launched == 1) {
-                    soda.velocityY = -5 * refScale; // soda moves upwards
-                    // Check if soda has gone past the top border
-                    if (soda.bottom < 0) {
-                        soda.launched = 2;
-                        soda.left = Math.random() * ((width - soda.width));
-                        soda.right = soda.left + soda.width;
-                        soda.top = -2 * soda.height;
-                        soda.bottom = soda.top + soda.height;
-                    }
-                }
-                else if (soda.launched == 2) {
-                    soda.width = sodaImg.width / 10 * refScale;
-                    soda.height = sodaImg.height / 10 * refScale;
-                    soda.velocityY = 2 * refScale;
-                    checkLanding(soda);
-                    if (soda.top > height) {
-                        soda.launched = -1;
-                    }
-                }
-
-                soda.left += soda.velocityX;
-                soda.right = soda.left + soda.width;
-                soda.top += soda.velocityY;
-                soda.bottom = soda.top + soda.height;
-                if (soda.launched > 0) {
-                    image(sodaImg, soda.left, soda.top, soda.width, soda.height);
-                }
-            });
         }
 
         function checkLanding(soda) {
-            // within left and right of bin
-            if (soda.left > recycle.left && soda.right < recycle.right && soda.top < recycle.top) {
-                // caught
-                if (soda.bottom > recycle.top && soda.velocityY > 0) {
-                    // Check if soda lands in recycle
-                    sodas.splice(0, 1);
+            // within left and right of bin, AND bottom of soda intersects with top of bin
+            if (soda.left > recycle.left && soda.right < recycle.right && soda.bottom >= recycle.top + soda.height / 4) {
+                // check if middle of can has passed the recyling top before splicing
+                if (soda.top + soda.height / 2 < recycle.top) {
+                    current = sodas.indexOf(soda);
+                    sodas.splice(current, 1);
                 }
             }
         }
 
+        function sodaMovement(soda) {
+            // Update soda position based on its velocity
+            soda.y += soda.velocityY;
+
+            // Apply gravity to the soda's vertical movement
+            if (soda.inAir) {
+                soda.velocityY += gravity;
+            }
+            // Collision detection between the soda and the ground
+            if (soda.y > soda.y_initial) {
+                soda.velocityY = 0;
+                soda.inAir = false;
+            }
+
+        }
 
         function styledText(string, x, y) {
             stroke(0, 0, 0);
@@ -244,6 +304,13 @@
             fill(255);
             text(string, x, y);
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var returnButton = document.getElementById('returnButton');
+            returnButton.addEventListener('click', function () {
+                window.location.href = 'room.html';
+            });
+        });
 
     </script>
 </body>

@@ -1,0 +1,45 @@
+/* styles.css */
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+}
+
+button {
+    position: fixed;
+    padding: 2vmin;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 3vmin;
+    color: white;
+    background-color: black;
+    border: none;
+    border-radius: 3vmin;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+button:hover {
+    background-color: pink;
+}
+
+#start, #quit, #return, #returnButton {
+    top: 88%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+#askNice, #askMean {
+    left: 50%;
+    transform: translate(-50%);
+}
+
+#askNice {
+    top: 84%;
+}
+
+#askMean {
+    top: 92%;
+}

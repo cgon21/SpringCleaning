@@ -6,49 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Main Menu</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-
-    canvas {
-      display: block;
-    }
-
-    #start {
-      display: block;
-      position: fixed;
-      top: 88%;
-      left: 50%;
-      transform: translate(-50%);
-      padding: 2vmin;
-      font-size: 3vmin;
-      color: white;
-      background-color: black;
-      border: none;
-      border-radius: 3vmin;
-      cursor: pointer;
-      z-index: 1000;
-    }
-
-    #start:hover {
-      background-color: pink;
-    }
-  </style>
+  <link rel="stylesheet" href="buttons.css">
 </head>
 
 <body>
   <button id="start">Start</button>
 
   <script>
+    let canvasX;
+    let canvasY;
+
     let room;
     let dusterImg, recyclingImg, hamperImg;
     let duster, recycling, hamper;
 
     let refScale;
 
-    // Preload all images
     function preload() {
       room = loadImage('sprites/room/room.png');
       dusterImg = loadImage('sprites/room/dusterIRL.png');
@@ -59,25 +32,31 @@
     function setup() {
       refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
 
-      let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-      let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+      canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+      canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
       width = room.width * refScale;
       height = room.height * refScale;
       calculatePositions();
 
-      canvas = createCanvas(width, height).attribute('willReadFrequently', true);
+      canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
       canvas.position(canvasX, canvasY);
+
+      // Position the button relative to the canvas
+      positionButton();
     }
 
     function windowResized() {
       refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
-      let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-      let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+      canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+      canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
       width = room.width * refScale;
       height = room.height * refScale;
       resizeCanvas(width, height);
       calculatePositions();
       canvas.position(canvasX, canvasY);
+
+      // Reposition the button when the window is resized
+      positionButton();
     }
 
     function calculatePositions() {
@@ -93,7 +72,7 @@
       hamper.bottom = hamper.top + hamper.height;
 
       duster = {
-        x: width / 2 - + 80 * refScale,
+        x: width / 2 - 80 * refScale,
         y: -390 * refScale,
         left: width / 2,
         right: width,
@@ -105,7 +84,7 @@
       duster.left -= duster.width / 2;
 
       recycling = {
-        left: width / 2 + 100,
+        left: width / 2 + 200 * refScale,
         top: 370 * refScale,
         width: recyclingImg.width / 2.6 * refScale,
         height: recyclingImg.height / 2.6 * refScale
@@ -114,7 +93,6 @@
 
       recycling.right = recycling.left + recycling.width;
       recycling.bottom = recycling.top + recycling.height;
-
     }
 
     function draw() {
@@ -132,7 +110,6 @@
       pop();
 
       styledText("Spring Cleaning", width / 2, height / 4);
-
     }
 
     function styledText(string, x, y) {
@@ -147,13 +124,20 @@
       text(string, x, y);
     }
 
+    function positionButton() {
+      const canvas = document.getElementById('mainCanvas');
+      const startButton = document.getElementById('start');
+      const canvasRect = canvas.getBoundingClientRect();
+      startButton.style.top = `${canvasY + height / 1.2}px`;
+      startButton.style.left = `${canvasX + width / 2}px`;
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       var startButton = document.getElementById('start');
       startButton.addEventListener('click', function () {
         window.location.href = 'room.html';
       });
     });
-
   </script>
 </body>
 
