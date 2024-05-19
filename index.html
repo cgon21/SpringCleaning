@@ -41,7 +41,6 @@
       canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
       canvas.position(canvasX, canvasY);
 
-      // Position the button relative to the canvas
       positionButton();
     }
 
@@ -54,8 +53,6 @@
       resizeCanvas(width, height);
       calculatePositions();
       canvas.position(canvasX, canvasY);
-
-      // Reposition the button when the window is resized
       positionButton();
     }
 

@@ -6,42 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #quit {
-            display: block;
-            position: fixed;
-            top: 88%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 3vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #quit:hover {
-            background-color: pink;
-        }
-    </style>
+    <link rel="stylesheet" href="buttons.css">
 </head>
 
 <body>
     <button id="quit">Quit</button>
 
     <script>
+        let canvasX;
+        let canvasY;
+
         let dusterCheck;
         if (dusterCheck === null) {
             localStorage.setItem('dusterCheck', '0');
@@ -60,12 +34,6 @@
         }
         sodaCheck = localStorage.getItem('sodaCheck');
 
-        // Reset
-
-        // localStorage.setItem('hamperCheck', '0');
-        // localStorage.setItem('dusterCheck', '0');
-        // localStorage.setItem('sodaCheck', '0');
-
         let room;
         let dustImg, dusterImg, sodaImg, recylingImg, laundryImg, hamperImg;
         let dust, duster, soda, recyling, laundry, hamper;
@@ -73,7 +41,6 @@
         let num = 4;
         let refScale;
 
-        // Preload all images
         function preload() {
             room = loadImage('sprites/room/room.png');
             dusterImg = loadImage('sprites/room/dusterIRL.png');
@@ -87,25 +54,28 @@
         function setup() {
             refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
 
-            let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+            canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+            canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
             width = room.width * refScale;
             height = room.height * refScale;
             calculatePositions();
 
-            canvas = createCanvas(width, height).attribute('willReadFrequently', true);
+            canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
+
+            positionButton();
         }
 
         function windowResized() {
             refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
-            let canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
+            canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
+            canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
             width = room.width * refScale;
             height = room.height * refScale;
             resizeCanvas(width, height);
             calculatePositions();
             canvas.position(canvasX, canvasY);
+            positionButton();
         }
 
         function calculatePositions() {
@@ -169,7 +139,7 @@
 
         function draw() {
             clear();
-            background(room); // set the background every frame
+            background(room);
 
             let mouseOverDuster = mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom;
             let mouseOverDust = mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom;
@@ -183,13 +153,11 @@
                     if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
                         tint(192, 255, 172);
                     }
-                    // Transformations and drawing scaled images
                     push();
                     translate(width / 2 + 680 * refScale, height / 2 + 180 * refScale);
                     rotate(PI * 1.1);
                     image(dusterImg, duster.x, duster.y, duster.width, duster.height);
                     pop();
-                    // square(width - refScale * 150, height - 700 * refScale, 150 * refScale);
                     tint('none');
                 }
                 if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
@@ -231,7 +199,6 @@
                 tint('none');
             }
 
-            // Set cursor to hand when over an object in the room
             cursor(mouseOverDust && dusterCheck != '2' ||
                 mouseOverDuster && dusterCheck === '0' ||
                 mouseOverLaundry && hamperCheck != '2' ||
@@ -273,6 +240,16 @@
                 if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom) {
                     window.location.href = 'recycling.html';
                 }
+            }
+        }
+
+        function positionButton() {
+            const canvas = document.getElementById('mainCanvas');
+            if (canvas) {
+                const quitButton = document.getElementById('quit');
+                const canvasRect = canvas.getBoundingClientRect();
+                quitButton.style.top = `${canvasY + height / 25}px`;
+                quitButton.style.left = `${canvasX + width / 2}px`;
             }
         }
 
