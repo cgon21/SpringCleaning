@@ -11,6 +11,7 @@
 
 <body>
     <button id="quit">Quit</button>
+    <button id="start">Continue</button>
 
     <script>
         let canvasX;
@@ -37,6 +38,15 @@
         } else {
             localStorage.setItem('recycleCheck', '-1');
         }
+
+        let tutorialCheck;
+        if (localStorage.getItem('tutorialCheck')) {
+            tutorialCheck = localStorage.getItem('tutorialCheck');
+        }
+        else {
+            localStorage.setItem('tutorialCheck', '-1');
+        }
+
         let room;
         let dustImg, dusterImg, sodaImg, recylingImg, laundryImg, hamperImg;
         let dust, duster, soda, recyling, laundry, hamper;
@@ -153,7 +163,7 @@
 
             if (dusterCheck != '2') {
                 if (dusterCheck <= '0') {
-                    if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
+                    if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom && tutorialCheck != '-1') {
                         tint(192, 255, 172);
                     }
                     push();
@@ -163,7 +173,7 @@
                     pop();
                     tint('none');
                 }
-                if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
+                if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom && tutorialCheck != '-1') {
                     tint(192, 255, 172);
                 }
                 for (let i = 0; i < num; i++) {
@@ -174,13 +184,13 @@
 
             if (recycleCheck != '2') {
                 if (recycleCheck <= '0') {
-                    if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom) {
+                    if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom && tutorialCheck != '-1') {
                         tint(192, 255, 172);
                     }
                     image(recylingImg, recyling.left, recyling.top, recyling.width, recyling.height);
                 }
                 tint('none');
-                if (mouseX >= soda.left && mouseX <= soda.right && mouseY >= soda.top && mouseY <= soda.bottom) {
+                if (mouseX >= soda.left && mouseX <= soda.right && mouseY >= soda.top && mouseY <= soda.bottom && tutorialCheck != '-1') {
                     tint(192, 255, 172);
                 }
                 image(sodaImg, soda.left, soda.top, soda.width, soda.height);
@@ -189,61 +199,81 @@
 
             if (hamperCheck != '2') {
                 if (hamperCheck <= '0') {
-                    if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
+                    if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom && tutorialCheck != '-1') {
                         tint(192, 255, 172);
                     }
                     image(hamperImg, hamper.left, hamper.top, hamper.width, hamper.height);
                 }
                 tint('none');
-                if (mouseX >= laundry.left && mouseX <= laundry.right && mouseY >= laundry.top && mouseY <= laundry.bottom) {
+                if (mouseX >= laundry.left && mouseX <= laundry.right && mouseY >= laundry.top && mouseY <= laundry.bottom && tutorialCheck != '-1') {
                     tint(192, 255, 172);
                 }
                 image(laundryImg, laundry.left, laundry.top, laundry.width, laundry.height);
                 tint('none');
             }
 
-            cursor(mouseOverDust && dusterCheck != '2' ||
-                mouseOverDuster && dusterCheck <= '0' ||
-                mouseOverLaundry && hamperCheck != '2' ||
-                mouseOverHamper && hamperCheck <= '0' ||
-                mouseOverSoda && recycleCheck != '2' ||
-                mouseOverRecycling && recycleCheck <= '0' ? HAND : ARROW);
+            if (tutorialCheck === '-1') {
+                styledText('Spring has arrived!', width / 2, height / 2.5, 130);
+                styledText('Clean up your room!', width / 2, height / 1.5, 80);
+                styledText('Search for messes and allies!', width / 2, height / 1.25, 80);
+            } else {
+                cursor(mouseOverDust && dusterCheck != '2' ||
+                    mouseOverDuster && dusterCheck <= '0' ||
+                    mouseOverLaundry && hamperCheck != '2' ||
+                    mouseOverHamper && hamperCheck <= '0' ||
+                    mouseOverSoda && recycleCheck != '2' ||
+                    mouseOverRecycling && recycleCheck <= '0' ? HAND : ARROW);
+            }
         }
 
         function mouseClicked() {
-            if (dusterCheck != '2') {
-                if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
-                    window.location.href = 'dust.html';
+            if (tutorialCheck != '-1') {
+                if (dusterCheck != '2') {
+                    if (mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom) {
+                        window.location.href = 'dust.html';
+                    }
                 }
-            }
-            if (dusterCheck <= '0') {
-                if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
-                    window.location.href = 'duster.html';
+                if (dusterCheck <= '0') {
+                    if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
+                        window.location.href = 'duster.html';
+                    }
                 }
-            }
 
-            if (hamperCheck != '2') {
-                if (mouseX >= laundry.left && mouseX <= laundry.right && mouseY >= laundry.top && mouseY <= laundry.bottom) {
-                    window.location.href = 'laundry.html';
+                if (hamperCheck != '2') {
+                    if (mouseX >= laundry.left && mouseX <= laundry.right && mouseY >= laundry.top && mouseY <= laundry.bottom) {
+                        window.location.href = 'laundry.html';
+                    }
                 }
-            }
-            if (hamperCheck <= '0') {
-                if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
-                    window.location.href = 'hamper.html';
+                if (hamperCheck <= '0') {
+                    if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
+                        window.location.href = 'hamper.html';
+                    }
                 }
-            }
 
-            if (recycleCheck != '2') {
-                if (mouseX >= soda.left && mouseX <= soda.right && mouseY >= soda.top && mouseY <= soda.bottom) {
-                    window.location.href = 'soda.html';
+                if (recycleCheck != '2') {
+                    if (mouseX >= soda.left && mouseX <= soda.right && mouseY >= soda.top && mouseY <= soda.bottom) {
+                        window.location.href = 'soda.html';
+                    }
                 }
-            }
 
-            if (recycleCheck <= '0') {
-                if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom) {
-                    window.location.href = 'recycling.html';
+                if (recycleCheck <= '0') {
+                    if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom) {
+                        window.location.href = 'recycling.html';
+                    }
                 }
             }
+        }
+
+        function styledText(string, x, y, size) {
+            stroke(0, 0, 0);
+            strokeWeight(6);
+            sizeOfText = size * scale;
+            textSize(sizeOfText);
+            textStyle(BOLD);
+            textAlign(CENTER);
+            textFont('Papyrus');
+            fill(255);
+            text(string, x, y);
         }
 
         function positionButton() {
@@ -253,6 +283,13 @@
                 const canvasRect = canvas.getBoundingClientRect();
                 quitButton.style.top = `${canvasY + height / 25}px`;
                 quitButton.style.left = `${canvasX + width / 2}px`;
+
+                const startButton = document.getElementById('start');
+                startButton.style.top = `${canvasY + height / 1.2}px`;
+                startButton.style.left = `${canvasX + width / 2}px`;
+                if (tutorialCheck === '1') {
+                    document.getElementById('start').style.display = 'none';
+                }
             }
         }
 
@@ -262,7 +299,16 @@
                 localStorage.setItem('hamperCheck', '-1');
                 localStorage.setItem('dusterCheck', '-1');
                 localStorage.setItem('recycleCheck', '-1');
+                localStorage.setItem('tutorialCheck', '-1');
                 window.location.href = 'index.html';
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var startButton = document.getElementById('start');
+            startButton.addEventListener('click', function () {
+                localStorage.setItem('tutorialCheck', '1');
+                window.location.href = 'room.html';
             });
         });
     </script>

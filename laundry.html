@@ -138,8 +138,6 @@
                     checkCollisions(sock);
                     let check = Math.random(1);
                     if (!sock.inAir && check > 0.985) {
-                        let aimVector = createVector((hamper.left - sock.left + sock.width / 2) / 5,
-                            (hamper.top + hamper.height / 2 - sock.top - sock.height / 2) / 5);
                         sock.velocityX = Math.random() * (5 * scale - (-5 * scale)) + (-5 * scale);
                         sock.velocityY = Math.random() * (-1 * scale - (-5 * scale)) + (-5 * scale);
                         sock.inAir = true;
