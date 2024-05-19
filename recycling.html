@@ -4,124 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hamper</title>
+    <title>recycle</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #askNice {
-            display: block;
-            position: fixed;
-            top: 84%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 3vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #askNice:hover {
-            background-color: pink;
-        }
-
-        #askMean {
-            display: block;
-            position: fixed;
-            top: 92%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 3vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #askMean:hover {
-            background-color: pink;
-        }
-
-        #return {
-            display: none;
-            position: fixed;
-            top: 88%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 3vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #return:hover {
-            background-color: pink;
-        }
-    </style>
+    <link rel="stylesheet" href="buttons.css">
 </head>
 
 <body>
-    <button id="askNice">My mom wants me to clean my room. Can you help me?</button>
-    <button id="askMean">CLEAN FOR ME!</button>
-    <button id="return">Return to Room</button>
+    <button id="uh" style="display: none;">Uh, maybe another time...</button>
+    <button id="niceStart" style="display: none;">Nice hat</button>
+    <button id="meanStart" style="display: none;">Oh brother...</button>
+    <button id="sorry" style="display: none;">I haven't said anything yet</button>
+    <button id="meanAgain" style="display: none;">Nothing, I just can't take you serious with that dorky hat</button>
+    <button id="niceAgain" style="display: none;">Think you could help me with rounding up some cans?</button>
+    <button id="meanEnd" style="display: none;">Just kidding</button>
+    <button id="return" style="display: none;">Return to Room</button>
 
     <script>
-        var dusterCheck = localStorage.getItem('sodaCheck');
+        var recycleCheck = localStorage.getItem('recycleCheck');
 
-        let bottomLeft;
-        let recycling;
+        let canvasX;
+        let canvasY;
+        let backdrop;
+        let recycle;
+
         let convo = 0;
-        let refScale;
 
-        // Preload all images
         function preload() {
-            bottomLeft = loadImage('sprites/characters/recycleBackground.png');
-            recycling = loadImage('sprites/characters/recycle.png');
+            backdrop = loadImage('sprites/characters/recycleBackground.png');
+            recycle = loadImage('sprites/characters/recycle.png');
         }
 
         function setup() {
-            refScale = Math.min(windowWidth / bottomLeft.width, windowHeight / bottomLeft.height);
+            refScale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
 
-            let canvasX = (windowWidth / 2) - (bottomLeft.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (bottomLeft.height / 2) * refScale;
-            width = bottomLeft.width * refScale;
-            height = bottomLeft.height * refScale;
+            canvasX = (windowWidth / 2) - (backdrop.width / 2) * refScale;
+            canvasY = (windowHeight / 2) - (backdrop.height / 2) * refScale;
+            width = backdrop.width * refScale;
+            height = backdrop.height * refScale;
 
-            canvas = createCanvas(width, height);
+            canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
+
+            positionButtons();
+            if (recycleCheck === '-1') {
+                showButtons(['uh']);
+            }
+            else {
+                showButtons(['niceStart', 'meanStart']);
+            }
         }
 
         function windowResized() {
-            refScale = Math.min(windowWidth / bottomLeft.width, windowHeight / bottomLeft.height);
-            let canvasX = (windowWidth / 2) - (bottomLeft.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (bottomLeft.height / 2) * refScale;
-            width = bottomLeft.width * refScale;
-            height = bottomLeft.height * refScale;
+            refScale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
+            canvasX = (windowWidth / 2) - (backdrop.width / 2) * refScale;
+            canvasY = (windowHeight / 2) - (backdrop.height / 2) * refScale;
+            width = backdrop.width * refScale;
+            height = backdrop.height * refScale;
 
             resizeCanvas(width, height);
             canvas.position(canvasX, canvasY);
+            positionButtons();
         }
 
         function styledText(string, x, y) {
-            sizeOfText = 18 * refScale;
+            sizeOfText = 16 * refScale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);
@@ -135,42 +81,122 @@
 
         function draw() {
             clear();
-            background(bottomLeft); // set the background every frame
-            image(recycling, width / 2 - recycling.width / 8 * refScale, height - recycling.height / 3 * refScale, recycling.width / 4 * refScale, recycling.height / 4 * refScale);
+            background(backdrop); // set the background every frame
+            image(recycle, width / 2 - recycle.width / 8 * refScale, height - recycle.height / 3 * refScale, recycle.width / 4 * refScale, recycle.height / 4 * refScale);
 
             switch (convo) {
                 case 0:
-                    styledText("Can I help you?", width / 2, height / 1.2);
+                    styledText("AH!  Sorry you startled me", width / 2, height / 1.21);
                     break;
                 case 1:
-                    styledText("Sure, why not?", width / 2, height / 1.2);
+                    styledText("Huh?", width / 2, height / 1.21);
                     break;
                 case 2:
-                    styledText("No thanks", width / 2, height / 1.2);
+                    styledText("Oh! Thank you so much!", width / 2, height / 1.21);
+                    break;
+                case 3:
+                    styledText("(´•╭╮•`)", width / 2, height / 1.21);
+                    break;
+                case 4:
+                    styledText("Uh... Yea actually I can!", width / 2, height / 1.21);
+                    break;
+                case 5:
+                    styledText("Oh...", width / 2, height / 1.21);
+                    break;
+                case 6:
+                    styledText("Oh sorry, go ahead", width / 2, height / 1.21);
                     break;
                 default:
             }
-
         }
 
+        function positionButtons() {
+            const canvas = document.getElementById('mainCanvas');
+            if (canvas) {
+                const canvasRect = canvas.getBoundingClientRect();
+
+                const buttons = [
+                    { id: 'uh', top: canvasY + height / 1.125 },
+                    { id: 'niceStart', top: canvasY + height / 1.08 },
+                    { id: 'meanStart', top: canvasY + height / 1.17 },
+                    { id: 'sorry', top: canvasY + height / 1.08 },
+                    { id: 'meanAgain', top: canvasY + height / 1.17 },
+                    { id: 'niceAgain', top: canvasY + height / 1.08 },
+                    { id: 'meanEnd', top: canvasY + height / 1.17 },
+                    { id: 'return', top: canvasY + height / 1.125 },
+                ];
+
+                buttons.forEach(button => {
+                    const element = document.getElementById(button.id);
+                    element.style.top = `${button.top}px`;
+                    element.style.left = `${canvasRect.left + canvasRect.width / 2}px`;
+                    element.style.transform = 'translate(-50%)';
+                    element.style.width = `${width}px`;
+                });
+            }
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
-            var returnButton = document.getElementById('askNice');
-            returnButton.addEventListener('click', function () {
-                convo = 1;
-                document.getElementById("askNice").style.display = "none";
-                document.getElementById("askMean").style.display = "none";
-                document.getElementById("return").style.display = "block";
-                localStorage.setItem('sodaCheck', '1');
+            var uhButton = document.getElementById('uh');
+            uhButton.addEventListener('click', function () {
+                convo = 5;
+                hideButtons(['uh']);
+                showButtons(['return']);
             });
         });
+
         document.addEventListener("DOMContentLoaded", function () {
-            var returnButton = document.getElementById('askMean');
-            returnButton.addEventListener('click', function () {
+            var niceStartButton = document.getElementById('niceStart');
+            niceStartButton.addEventListener('click', function () {
                 convo = 2;
-                document.getElementById("askNice").style.display = "none";
-                document.getElementById("askMean").style.display = "none";
-                document.getElementById("return").style.display = "block";
+                hideButtons(['niceStart', 'meanStart']);
+                showButtons(['niceAgain', 'meanEnd']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var meanStartButton = document.getElementById('meanStart');
+            meanStartButton.addEventListener('click', function () {
+                convo = 1;
+                hideButtons(['niceStart', 'meanStart']);
+                showButtons(['sorry', 'meanAgain']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var sorryButton = document.getElementById('sorry');
+            sorryButton.addEventListener('click', function () {
+                convo = 6;
+                hideButtons(['sorry', 'meanAgain']);
+                showButtons(['niceStart', 'meanStart']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var meanAgainButton = document.getElementById('meanAgain');
+            meanAgainButton.addEventListener('click', function () {
+                convo = 3;
+                hideButtons(['sorry', 'meanAgain']);
+                showButtons(['return']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var niceAgainButton = document.getElementById('niceAgain');
+            niceAgainButton.addEventListener('click', function () {
+                convo = 4;
+                localStorage.setItem('recycleCheck', '1');
+                hideButtons(['niceAgain', 'meanEnd']);
+                showButtons(['return']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var meanEndButton = document.getElementById('meanEnd');
+            meanEndButton.addEventListener('click', function () {
+                convo = 5;
+                hideButtons(['niceAgain', 'meanEnd']);
+                showButtons(['return']);
             });
         });
 
@@ -181,6 +207,17 @@
             });
         });
 
+        function hideButtons(buttonIds) {
+            buttonIds.forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+        }
+
+        function showButtons(buttonIds) {
+            buttonIds.forEach(id => {
+                document.getElementById(id).style.display = 'block';
+            });
+        }
     </script>
 </body>
 

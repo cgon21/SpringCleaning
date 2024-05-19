@@ -6,121 +6,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Duster</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #askNice {
-            display: block;
-            position: fixed;
-            top: 84%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 3vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #askNice:hover {
-            background-color: pink;
-        }
-
-        #askMean {
-            display: block;
-            position: fixed;
-            top: 92%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 3vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #askMean:hover {
-            background-color: pink;
-        }
-
-        #return {
-            display: none;
-            position: fixed;
-            top: 88%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 3vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #return:hover {
-            background-color: pink;
-        }
-    </style>
+    <link rel="stylesheet" href="buttons.css">
 </head>
 
 <body>
-    <button id="askNice">My mom wants me to clean my room. Can you help me?</button>
-    <button id="askMean">CLEAN FOR ME!</button>
-    <button id="return">Return to Room</button>
+    <button id="uh" style="display: none;">Uh, maybe another time...</button>
+    <button id="niceStart" style="display: none;">Can you handle some dust bunnies?</button>
+    <button id="meanStart" style="display: none;">CLEAN FOR ME!</button>
+    <button id="sorry" style="display: none;">Sorry, what I meant to say was...</button>
+    <button id="meanAgain" style="display: none;">GET TO WORK!</button>
+    <button id="niceAgain" style="display: none;">I have a dime. Would that work?</button>
+    <button id="meanEnd" style="display: none;">I OWE YOU NOTHING</button>
+    <button id="return" style="display: none;">Return to Room</button>
 
     <script>
         var dusterCheck = localStorage.getItem('dusterCheck');
 
-        let bedside;
+        let canvasX;
+        let canvasY;
+
+        let backdrop;
         let duster;
         let convo = 0;
 
-        // Preload all images
         function preload() {
-            bedside = loadImage('sprites/characters/dusterBackground.png');
+            backdrop = loadImage('sprites/characters/dusterBackground.png');
             duster = loadImage('sprites/characters/duster.png');
         }
 
         function setup() {
-            scale = Math.min(windowWidth / bedside.width, windowHeight / bedside.height);
+            scale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
 
-            let canvasX = (windowWidth / 2) - (bedside.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (bedside.height / 2) * scale;
-            width = bedside.width * scale;
-            height = bedside.height * scale;
+            canvasX = (windowWidth / 2) - (backdrop.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (backdrop.height / 2) * scale;
+            width = backdrop.width * scale;
+            height = backdrop.height * scale;
 
-            canvas = createCanvas(width, height);
+            canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
+
+            positionButtons();
+            if (dusterCheck === '-1') {
+                showButtons(['uh']);
+            }
+            else {
+                showButtons(['niceStart', 'meanStart']);
+            }
         }
 
         function windowResized() {
-            scale = Math.min(windowWidth / bedside.width, windowHeight / bedside.height);
-            let canvasX = (windowWidth / 2) - (bedside.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (bedside.height / 2) * scale;
-            width = bedside.width * scale;
-            height = bedside.height * scale;
+            scale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
+            canvasX = (windowWidth / 2) - (backdrop.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (backdrop.height / 2) * scale;
+            width = backdrop.width * scale;
+            height = backdrop.height * scale;
 
             resizeCanvas(width, height);
             canvas.position(canvasX, canvasY);
+            positionButtons();
         }
 
         function styledText(string, x, y) {
-            sizeOfText = 18 * scale;
+            sizeOfText = 16 * scale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);
@@ -134,42 +81,122 @@
 
         function draw() {
             clear();
-            background(bedside); // set the background every frame
+            background(backdrop);
             image(duster, width / 2 - duster.width / 8 * scale, height - duster.height / 3 * scale, duster.width / 4 * scale, duster.height / 4 * scale);
 
             switch (convo) {
                 case 0:
-                    styledText("Can I help you?", width / 2, height / 1.2);
+                    styledText("Can I help you?", width / 2, height / 1.21);
                     break;
                 case 1:
-                    styledText("Sure, why not?", width / 2, height / 1.2);
+                    styledText("Excuse me?", width / 2, height / 1.21);
                     break;
                 case 2:
-                    styledText("No thanks", width / 2, height / 1.2);
+                    styledText("Of course, but what's in it for me?", width / 2, height / 1.21);
+                    break;
+                case 3:
+                    styledText("No thanks", width / 2, height / 1.21);
+                    break;
+                case 4:
+                    styledText("Sure, why not?", width / 2, height / 1.21);
+                    break;
+                case 5:
+                    styledText("Okay", width / 2, height / 1.21);
+                    break;
+                case 6:
+                    styledText("Uh huh?", width / 2, height / 1.21);
                     break;
                 default:
             }
-
         }
 
+        function positionButtons() {
+            const canvas = document.getElementById('mainCanvas');
+            if (canvas) {
+                const canvasRect = canvas.getBoundingClientRect();
+
+                const buttons = [
+                    { id: 'uh', top: canvasY + height / 1.125 },
+                    { id: 'niceStart', top: canvasY + height / 1.08 },
+                    { id: 'meanStart', top: canvasY + height / 1.17 },
+                    { id: 'sorry', top: canvasY + height / 1.08 },
+                    { id: 'meanAgain', top: canvasY + height / 1.17 },
+                    { id: 'niceAgain', top: canvasY + height / 1.08 },
+                    { id: 'meanEnd', top: canvasY + height / 1.17 },
+                    { id: 'return', top: canvasY + height / 1.125 },
+                ];
+
+                buttons.forEach(button => {
+                    const element = document.getElementById(button.id);
+                    element.style.top = `${button.top}px`;
+                    element.style.left = `${canvasRect.left + canvasRect.width / 2}px`;
+                    element.style.transform = 'translate(-50%)';
+                    element.style.width = `${width}px`;
+                });
+            }
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
-            var returnButton = document.getElementById('askNice');
-            returnButton.addEventListener('click', function () {
-                convo = 1;
-                document.getElementById("askNice").style.display = "none";
-                document.getElementById("askMean").style.display = "none";
-                document.getElementById("return").style.display = "block";
-                localStorage.setItem('dusterCheck', '1');
+            var uhButton = document.getElementById('uh');
+            uhButton.addEventListener('click', function () {
+                convo = 5;
+                hideButtons(['uh']);
+                showButtons(['return']);
             });
         });
+
         document.addEventListener("DOMContentLoaded", function () {
-            var returnButton = document.getElementById('askMean');
-            returnButton.addEventListener('click', function () {
+            var niceStartButton = document.getElementById('niceStart');
+            niceStartButton.addEventListener('click', function () {
                 convo = 2;
-                document.getElementById("askNice").style.display = "none";
-                document.getElementById("askMean").style.display = "none";
-                document.getElementById("return").style.display = "block";
+                hideButtons(['niceStart', 'meanStart']);
+                showButtons(['niceAgain', 'meanEnd']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var meanStartButton = document.getElementById('meanStart');
+            meanStartButton.addEventListener('click', function () {
+                convo = 1;
+                hideButtons(['niceStart', 'meanStart']);
+                showButtons(['sorry', 'meanAgain']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var sorryButton = document.getElementById('sorry');
+            sorryButton.addEventListener('click', function () {
+                convo = 6;
+                hideButtons(['sorry', 'meanAgain']);
+                showButtons(['niceStart', 'meanStart']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var meanAgainButton = document.getElementById('meanAgain');
+            meanAgainButton.addEventListener('click', function () {
+                convo = 3;
+                hideButtons(['sorry', 'meanAgain']);
+                showButtons(['return']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var niceAgainButton = document.getElementById('niceAgain');
+            niceAgainButton.addEventListener('click', function () {
+                convo = 4;
+                localStorage.setItem('dusterCheck', '1');
+                hideButtons(['niceAgain', 'meanEnd']);
+                showButtons(['return']);
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var meanEndButton = document.getElementById('meanEnd');
+            meanEndButton.addEventListener('click', function () {
+                convo = 5;
+                hideButtons(['niceAgain', 'meanEnd']);
+                showButtons(['return']);
             });
         });
 
@@ -180,6 +207,17 @@
             });
         });
 
+        function hideButtons(buttonIds) {
+            buttonIds.forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+        }
+
+        function showButtons(buttonIds) {
+            buttonIds.forEach(id => {
+                document.getElementById(id).style.display = 'block';
+            });
+        }
     </script>
 </body>
 
