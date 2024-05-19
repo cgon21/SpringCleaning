@@ -6,27 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dirty Laundry</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <style>
-        #returnButton {
-            display: none;
-            position: fixed;
-            top: 80%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 5vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #returnButton:hover {
-            background-color: pink;
-        }
-    </style>
+    <link rel="stylesheet" href="buttons.css">
 </head>
 
 <body>
@@ -36,6 +16,8 @@
         if (hamperCheck === '-1') {
             localStorage.setItem('hamperCheck', '0');
         }
+        let canvasX;
+        let canvasY;
 
         let court;
         let sockImg, hamperSock, hamper, hamperImg, girl, girlEmpty, girlHolding;
@@ -67,31 +49,31 @@
             frameRate(60);
 
             scale = Math.min(windowWidth / court.width, windowHeight / court.height);
-
-            let canvasX = (windowWidth / 2) - (court.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (court.height / 2) * scale;
+            canvasX = (windowWidth / 2) - (court.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (court.height / 2) * scale;
             width = court.width * scale;
             height = court.height * scale;
-
-            canvas = createCanvas(width, height);
+            canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
 
             calculatePositions()
 
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
+            positionButton();
         }
 
         function windowResized() {
             scale = Math.min(windowWidth / court.width, windowHeight / court.height);
-            let canvasX = (windowWidth / 2) - (court.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (court.height / 2) * scale;
+            canvasX = (windowWidth / 2) - (court.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (court.height / 2) * scale;
             width = court.width * scale;
             height = court.height * scale;
 
             resizeCanvas(width, height);
             calculatePositions()
             canvas.position(canvasX, canvasY);
+            positionButton();
         }
 
         function calculatePositions() {
@@ -169,6 +151,7 @@
 
             // Hamper is here
             else {
+                document.getElementById("returnButton").style.display = "none";
                 bounce = true;
                 socks.forEach(sock => {
                     sockMovement(sock);
@@ -357,6 +340,14 @@
             socks[0].inAir = true;
             isAiming = false;
         }
+
+        function positionButton() {
+            const canvas = document.getElementById('mainCanvas');
+            const returnButton = document.getElementById('returnButton');
+            const canvasRect = canvas.getBoundingClientRect();
+            returnButton.style.top = `${canvasY + height / 1.2}px`;
+            returnButton.style.left = `${canvasX + width / 2}px`;
+        };
 
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('returnButton');

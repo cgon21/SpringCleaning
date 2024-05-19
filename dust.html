@@ -193,7 +193,7 @@
                     push();
                     translate(mouseX, mouseY + dusterSize * 1.75 - 100 * scale); // Adjusting the pivot point to the bottom
                     rotate(dusterAngle);
-                    image(duster, -dusterSize / 3.5 - 60 * scale, -dusterSize * 3.5 - 160 * scale, dusterSize * 1.7, dusterSize * 3.5); // Position image relative to the new pivot
+                    image(duster, -dusterSize / 3.5 - 60 * scale, -dusterSize * 3.5 - 160 * scale, dusterSize * 1.7, dusterSize * 4.5); // Position image relative to the new pivot
                     pop();
                 }
                 else {
@@ -211,7 +211,7 @@
                         bunny.y += sin(a);
 
                         image(bunnyImage, bunny.x - bunnySize / 2, bunny.y - bunnySize / 2, bunnySize, bunnySize);
-                        image(duster, mouseX - dusterSize * 1.7 / 2, mouseY - dusterSize * 3.5 + 100 * scale, dusterSize * 1.7, dusterSize * 3.5);
+                        image(duster, mouseX - dusterSize * 1.7 / 2, mouseY - dusterSize * 3.5 + 100 * scale, dusterSize * 1.7, dusterSize * 4.5);
 
                         // If bunny goes off screen, respawn at a random spot
                         if (!onScreen(bunny)) {

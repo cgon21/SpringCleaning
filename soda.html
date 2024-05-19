@@ -6,27 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soda Cans</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <style>
-        #returnButton {
-            display: none;
-            position: fixed;
-            top: 80%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 5vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #returnButton:hover {
-            background-color: pink;
-        }
-    </style>
+    <link rel="stylesheet" href="buttons.css">
 </head>
 
 <body>
@@ -36,9 +16,11 @@
         if (recycleCheck === '-1') {
             localStorage.setItem('recycleCheck', '0');
         }
+        let canvasX;
+        let canvasY;
 
         let circus;
-        let defaultSoda, sodaImg, recycle, recycleImg, cannon, cannonImg;
+        let defaultSoda, sodaImg, recycle, recycleImg, cannon, cannonImg, dude, dudeImg;
         let sodas = [];
         let sodasToDisplay = [];
         let index = 0;
@@ -54,43 +36,56 @@
             recycleImg = loadImage('sprites/room/recyclingBin.png');
             cannonImg = loadImage('sprites/miniGames/cannon.png');
             circus = loadImage('sprites/miniGames/circus.png');
+            dudeImg = loadImage('sprites/characters/recycle.png');
         }
 
         function setup() {
             frameRate(60);
 
             scale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
-
-            let canvasX = (windowWidth / 2) - (circus.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (circus.height / 2) * scale;
+            canvasX = (windowWidth / 2) - (circus.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (circus.height / 2) * scale;
             width = circus.width * scale;
             height = circus.height * scale;
-
-            canvas = createCanvas(width, height);
+            canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
 
             calculatePositions()
 
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
+
+            positionButton();
         }
 
         function windowResized() {
             scale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
-            let canvasX = (windowWidth / 2) - (circus.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (circus.height / 2) * scale;
+            canvasX = (windowWidth / 2) - (circus.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (circus.height / 2) * scale;
             width = circus.width * scale;
             height = circus.height * scale;
 
             resizeCanvas(width, height);
             calculatePositions()
             canvas.position(canvasX, canvasY);
+
+            positionButton();
         }
 
         function calculatePositions() {
             gravity = 0.5 * scale;
             maxPowerX = 19 * scale;
             maxPowerY = 29 * scale;
+
+            dude = {
+                left: width / 2,
+                top: height / 2 - 110 * scale,
+                width: dudeImg.width / 9 * scale,
+                height: dudeImg.height / 9 * scale
+            };
+            dude.left = width / 2 - dude.width / 2 - 50 * scale;
+            dude.right = dude.left + dude.width;
+            dude.bottom = dude.top + dude.height;
 
             recycle = {
                 left: width - 680 * scale,
@@ -124,7 +119,7 @@
             defaultSoda.right = defaultSoda.left + defaultSoda.width;
             defaultSoda.bottom = defaultSoda.top + defaultSoda.height;
 
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 12; i++) {
                 sodas[i] = {
                     left: width - 680 * scale,
                     top: 270 * scale,
@@ -169,6 +164,7 @@
                 });
                 document.getElementById("returnButton").style.display = "block";
             } else {
+                document.getElementById("returnButton").style.display = "none";
                 if (sodas.length < 1) {
                     image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
                     styledText("Cans Recycled!", width / 2, height / 2.7);
@@ -179,7 +175,7 @@
                     if (cannon.width > cannonImg.width / 6 * scale && cannon.scale == 1.005) {
                         cannon.scale = 0.995;
                         cannon.count++;
-                        if (cannon.count == 2) {
+                        if (cannon.count == 1) {
                             cannon.count = 0;
                             launchSoda();
                         }
@@ -192,6 +188,12 @@
                     cannon.left = width / 2 - cannon.width / 2;
                     cannon.top = height / 2 - cannon.height / 2;
 
+                    push();
+                    translate(dude.left + dude.width / 2, dude.top + dude.height / 2);
+                    rotate(-0.5); // Slight rotation
+                    imageMode(CENTER);
+                    image(dudeImg, 0, 0, dude.width, dude.height);
+                    pop();
                     image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
 
                     recycle.left = mouseX - recycle.width / 2;
@@ -212,7 +214,7 @@
                         }
                         // spawned infront of cannon and need to move upwards
                         else if (soda.launched == 1) {
-                            soda.velocityY = -8 * scale; // soda moves upwards
+                            soda.velocityY = -15 * scale; // soda moves upwards
                             // Check if soda has gone past the top border
                             if (soda.bottom < -sodaImg.width / 6 * scale) {
                                 soda.launched = 2;
@@ -228,7 +230,7 @@
                         }
                         // soda is falling
                         else if (soda.launched == 2) {
-                            soda.velocityY = 6 * scale;
+                            soda.velocityY = 9 * scale;
                             checkLanding(soda);
                             if (soda.top > height) {
                                 soda.launched = -1;
@@ -298,6 +300,14 @@
             fill(255);
             text(string, x, y);
         }
+
+        function positionButton() {
+            const canvas = document.getElementById('mainCanvas');
+            const returnButton = document.getElementById('returnButton');
+            const canvasRect = canvas.getBoundingClientRect();
+            returnButton.style.top = `${canvasY + height / 1.2}px`;
+            returnButton.style.left = `${canvasX + width / 2}px`;
+        };
 
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('returnButton');
