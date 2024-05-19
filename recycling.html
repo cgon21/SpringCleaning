@@ -106,6 +106,9 @@
                 case 6:
                     styledText("Oh sorry, go ahead", width / 2, height / 1.21);
                     break;
+                case 7:
+                    styledText("Oh... okay!", width / 2, height / 1.21);
+                    break;
                 default:
             }
         }
@@ -139,7 +142,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             var uhButton = document.getElementById('uh');
             uhButton.addEventListener('click', function () {
-                convo = 5;
+                convo = 7;
                 hideButtons(['uh']);
                 showButtons(['return']);
             });

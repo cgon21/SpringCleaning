@@ -14,32 +14,29 @@ button {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 3vmin;
     color: white;
-    background-color: black;
+    background: rgba(0, 0, 0, 0.5);
     border: none;
     border-radius: 3vmin;
     cursor: pointer;
     z-index: 1000;
+    left: 50%;
+    transform: translate(-50%);
 }
 
 button:hover {
+    color: white;
     background-color: pink;
 }
 
-#start, #quit, #return, #returnButton {
-    top: 88%;
-    left: 50%;
+#start, #returnButton {
     transform: translate(-50%);
 }
 
-#askNice, #askMean {
-    left: 50%;
-    transform: translate(-50%);
+#quit {
+    top: 1%;
 }
 
-#askNice {
-    top: 84%;
-}
-
-#askMean {
-    top: 92%;
+#uh, #niceStart, #meanStart, #sorry, #meanAgain, #niceAgain, #meanEnd, #return {
+    border-radius: 0;
+    width: 90%;
 }

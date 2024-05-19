@@ -42,6 +42,9 @@
     <button id="returnButton">Return to Room</button>
     <script>
         var dusterCheck = localStorage.getItem('dusterCheck');
+        if (dusterCheck < '0') {
+            localStorage.setItem('dusterCheck', '0');
+        }
 
         let shelf;
         let dustBunnyImages = [];
@@ -125,7 +128,7 @@
             fill(100, 50, 0, 150 * dustBunnies.length / num);
             rect(0, 0, canvas.width, canvas.height);
 
-            if (dusterCheck === '0') {
+            if (dusterCheck <= '0') {
                 for (let i = dustBunnies.length - 1; i >= 0; i--) {
                     let bunny = dustBunnies[i];
                     let bunnyImage = dustBunnyImages[i];

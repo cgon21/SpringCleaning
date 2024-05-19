@@ -16,7 +16,7 @@
     <button id="sorry" style="display: none;">Sorry, what I meant to say was...</button>
     <button id="meanAgain" style="display: none;">GET TO WORK!</button>
     <button id="niceAgain" style="display: none;">I have a dime. Would that work?</button>
-    <button id="meanEnd" style="display: none;">I OWE YOU NOTHING</button>
+    <button id="meanEnd" style="display: none;">Nothing?</button>
     <button id="return" style="display: none;">Return to Room</button>
 
     <script>
@@ -101,10 +101,13 @@
                     styledText("Sure, why not?", width / 2, height / 1.21);
                     break;
                 case 5:
-                    styledText("Okay", width / 2, height / 1.21);
+                    styledText("Yeaaa, no.", width / 2, height / 1.21);
                     break;
                 case 6:
                     styledText("Uh huh?", width / 2, height / 1.21);
+                    break;
+                case 7:
+                    styledText("Whatever...", width / 2, height / 1.21);
                     break;
                 default:
             }
@@ -139,7 +142,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             var uhButton = document.getElementById('uh');
             uhButton.addEventListener('click', function () {
-                convo = 5;
+                convo = 7;
                 hideButtons(['uh']);
                 showButtons(['return']);
             });

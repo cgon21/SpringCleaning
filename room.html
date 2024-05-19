@@ -17,23 +17,26 @@
         let canvasY;
 
         let dusterCheck;
-        if (dusterCheck === null) {
-            localStorage.setItem('dusterCheck', '0');
+        if (localStorage.getItem('dusterCheck')) {
+            dusterCheck = localStorage.getItem('dusterCheck');
         }
-        dusterCheck = localStorage.getItem('dusterCheck');
+        else {
+            localStorage.setItem('dusterCheck', '-1');
+        }
 
         let hamperCheck;
-        if (hamperCheck === null) {
-            localStorage.setItem('hamperCheck', '0');
+        if (localStorage.getItem('hamperCheck')) {
+            hamperCheck = localStorage.getItem('hamperCheck');
+        } else {
+            localStorage.setItem('hamperCheck', '-1');
         }
-        hamperCheck = localStorage.getItem('hamperCheck');
 
-        let sodaCheck;
-        if (sodaCheck === null) {
-            localStorage.setItem('sodaCheck', '0');
+        let recycleCheck;
+        if (localStorage.getItem('recycleCheck')) {
+            recycleCheck = localStorage.getItem('recycleCheck');
+        } else {
+            localStorage.setItem('recycleCheck', '-1');
         }
-        sodaCheck = localStorage.getItem('sodaCheck');
-
         let room;
         let dustImg, dusterImg, sodaImg, recylingImg, laundryImg, hamperImg;
         let dust, duster, soda, recyling, laundry, hamper;
@@ -149,7 +152,7 @@
             let mouseOverRecycling = mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom;
 
             if (dusterCheck != '2') {
-                if (dusterCheck === '0') {
+                if (dusterCheck <= '0') {
                     if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
                         tint(192, 255, 172);
                     }
@@ -169,8 +172,8 @@
                 tint('none');
             }
 
-            if (sodaCheck != '2') {
-                if (sodaCheck === '0') {
+            if (recycleCheck != '2') {
+                if (recycleCheck <= '0') {
                     if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom) {
                         tint(192, 255, 172);
                     }
@@ -185,7 +188,7 @@
             }
 
             if (hamperCheck != '2') {
-                if (hamperCheck === '0') {
+                if (hamperCheck <= '0') {
                     if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
                         tint(192, 255, 172);
                     }
@@ -200,11 +203,11 @@
             }
 
             cursor(mouseOverDust && dusterCheck != '2' ||
-                mouseOverDuster && dusterCheck === '0' ||
+                mouseOverDuster && dusterCheck <= '0' ||
                 mouseOverLaundry && hamperCheck != '2' ||
-                mouseOverHamper && hamperCheck === '0' ||
-                mouseOverSoda && sodaCheck != '2' ||
-                mouseOverRecycling && sodaCheck === '0' ? HAND : ARROW);
+                mouseOverHamper && hamperCheck <= '0' ||
+                mouseOverSoda && recycleCheck != '2' ||
+                mouseOverRecycling && recycleCheck <= '0' ? HAND : ARROW);
         }
 
         function mouseClicked() {
@@ -213,7 +216,7 @@
                     window.location.href = 'dust.html';
                 }
             }
-            if (dusterCheck === '0') {
+            if (dusterCheck <= '0') {
                 if (mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom) {
                     window.location.href = 'duster.html';
                 }
@@ -224,19 +227,19 @@
                     window.location.href = 'laundry.html';
                 }
             }
-            if (hamperCheck === '0') {
+            if (hamperCheck <= '0') {
                 if (mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom) {
                     window.location.href = 'hamper.html';
                 }
             }
 
-            if (sodaCheck != '2') {
+            if (recycleCheck != '2') {
                 if (mouseX >= soda.left && mouseX <= soda.right && mouseY >= soda.top && mouseY <= soda.bottom) {
                     window.location.href = 'soda.html';
                 }
             }
 
-            if (sodaCheck === '0') {
+            if (recycleCheck <= '0') {
                 if (mouseX >= recyling.left && mouseX <= recyling.right && mouseY >= recyling.top && mouseY <= recyling.bottom) {
                     window.location.href = 'recycling.html';
                 }
@@ -256,9 +259,9 @@
         document.addEventListener("DOMContentLoaded", function () {
             var quitButton = document.getElementById('quit');
             quitButton.addEventListener('click', function () {
-                localStorage.setItem('hamperCheck', '0');
-                localStorage.setItem('dusterCheck', '0');
-                localStorage.setItem('sodaCheck', '0');
+                localStorage.setItem('hamperCheck', '-1');
+                localStorage.setItem('dusterCheck', '-1');
+                localStorage.setItem('recycleCheck', '-1');
                 window.location.href = 'index.html';
             });
         });

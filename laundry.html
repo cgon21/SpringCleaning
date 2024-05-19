@@ -7,15 +7,6 @@
     <title>Dirty Laundry</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-        }
-
         #returnButton {
             display: none;
             position: fixed;
@@ -42,6 +33,9 @@
     <button id="returnButton">Return to Room</button>
     <script>
         var hamperCheck = localStorage.getItem('hamperCheck');
+        if (hamperCheck === '-1') {
+            localStorage.setItem('hamperCheck', '0');
+        }
 
         let court;
         let sockImg, hamperSock, hamper, hamperImg, girl, girlEmpty, girlHolding;
@@ -155,7 +149,7 @@
             background(court); // set the background every frame
 
             // hamperCheck = '0';
-            if (hamperCheck === '0') {
+            if (hamperCheck <= '0') {
                 // Hamper is not present
                 socks.forEach(sock => {
                     sockMovement(sock);

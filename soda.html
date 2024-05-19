@@ -7,15 +7,6 @@
     <title>Soda Cans</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-        }
-
         #returnButton {
             display: none;
             position: fixed;
@@ -41,7 +32,10 @@
 <body>
     <button id="returnButton">Return to Room</button>
     <script>
-        var sodaCheck = localStorage.getItem('sodaCheck');
+        var recycleCheck = localStorage.getItem('recycleCheck');
+        if (recycleCheck === '-1') {
+            localStorage.setItem('recycleCheck', '0');
+        }
 
         let circus;
         let defaultSoda, sodaImg, recycle, recycleImg, cannon, cannonImg;
@@ -162,7 +156,7 @@
         function draw() {
             background(circus); // set the background every frame
 
-            if (sodaCheck === '0') {
+            if (recycleCheck <= '0') {
                 image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
                 sodasToDisplay.forEach(soda => {
                     sodaMovement(soda);
@@ -178,7 +172,7 @@
                 if (sodas.length < 1) {
                     image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
                     styledText("Cans Recycled!", width / 2, height / 2.7);
-                    localStorage.setItem('sodaCheck', '2');
+                    localStorage.setItem('recycleCheck', '2');
                     document.getElementById("returnButton").style.display = "block";
                 }
                 else {
