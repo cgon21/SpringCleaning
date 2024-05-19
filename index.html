@@ -20,7 +20,7 @@
     let dusterImg, recyclingImg, hamperImg;
     let duster, recycling, hamper;
 
-    let refScale;
+    let scale;
 
     function preload() {
       room = loadImage('sprites/room/room.png');
@@ -30,12 +30,12 @@
     }
 
     function setup() {
-      refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
+      scale = Math.min(windowWidth / room.width, windowHeight / room.height);
 
-      canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-      canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
-      width = room.width * refScale;
-      height = room.height * refScale;
+      canvasX = (windowWidth / 2) - (room.width / 2) * scale;
+      canvasY = (windowHeight / 2) - (room.height / 2) * scale;
+      width = room.width * scale;
+      height = room.height * scale;
       calculatePositions();
 
       canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
@@ -45,11 +45,11 @@
     }
 
     function windowResized() {
-      refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
-      canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-      canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
-      width = room.width * refScale;
-      height = room.height * refScale;
+      scale = Math.min(windowWidth / room.width, windowHeight / room.height);
+      canvasX = (windowWidth / 2) - (room.width / 2) * scale;
+      canvasY = (windowHeight / 2) - (room.height / 2) * scale;
+      width = room.width * scale;
+      height = room.height * scale;
       resizeCanvas(width, height);
       calculatePositions();
       canvas.position(canvasX, canvasY);
@@ -58,10 +58,10 @@
 
     function calculatePositions() {
       hamper = {
-        left: width / 2 - 100 * refScale,
-        top: height - 410 * refScale,
-        width: hamperImg.width / 1.5 * refScale,
-        height: hamperImg.height / 1.5 * refScale
+        left: width / 2 - 100 * scale,
+        top: height - 410 * scale,
+        width: hamperImg.width / 1.5 * scale,
+        height: hamperImg.height / 1.5 * scale
       };
       hamper.left -= hamper.width / 2;
       hamper.top -= hamper.height / 2;
@@ -69,22 +69,22 @@
       hamper.bottom = hamper.top + hamper.height;
 
       duster = {
-        x: width / 2 - 80 * refScale,
-        y: -390 * refScale,
+        x: width / 2 - 80 * scale,
+        y: -390 * scale,
         left: width / 2,
         right: width,
-        top: height - 400 * refScale,
-        bottom: height - 400 * refScale + 280 * refScale,
-        width: dusterImg.width / 2.3 * refScale,
-        height: dusterImg.height / 2.3 * refScale
+        top: height - 400 * scale,
+        bottom: height - 400 * scale + 280 * scale,
+        width: dusterImg.width / 2.3 * scale,
+        height: dusterImg.height / 2.3 * scale
       };
       duster.left -= duster.width / 2;
 
       recycling = {
-        left: width / 2 + 200 * refScale,
-        top: 370 * refScale,
-        width: recyclingImg.width / 2.6 * refScale,
-        height: recyclingImg.height / 2.6 * refScale
+        left: width / 2 + 200 * scale,
+        top: 370 * scale,
+        width: recyclingImg.width / 2.6 * scale,
+        height: recyclingImg.height / 2.6 * scale
       };
       recycling.left -= recycling.width / 2;
 
@@ -101,7 +101,7 @@
 
       // Transformations and drawing scaled images
       push();
-      translate(width / 2 + 680 * refScale, height / 2 + 180 * refScale);
+      translate(width / 2 + 680 * scale, height / 2 + 180 * scale);
       rotate(PI * 1.1);
       image(dusterImg, duster.x, duster.y, duster.width, duster.height);
       pop();
@@ -112,7 +112,7 @@
     function styledText(string, x, y) {
       stroke(0, 0, 0);
       strokeWeight(5);
-      sizeOfText = 130 * refScale;
+      sizeOfText = 130 * scale;
       textSize(sizeOfText);
       textStyle(BOLD);
       textAlign(CENTER);

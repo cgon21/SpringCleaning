@@ -49,7 +49,7 @@
         let maxPowerX;
         let maxPowerY;
 
-        let refScale;
+        let scale;
         let width;
         let height;
         let bounce = false;
@@ -66,12 +66,12 @@
         function setup() {
             frameRate(60);
 
-            refScale = Math.min(windowWidth / court.width, windowHeight / court.height);
+            scale = Math.min(windowWidth / court.width, windowHeight / court.height);
 
-            let canvasX = (windowWidth / 2) - (court.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (court.height / 2) * refScale;
-            width = court.width * refScale;
-            height = court.height * refScale;
+            let canvasX = (windowWidth / 2) - (court.width / 2) * scale;
+            let canvasY = (windowHeight / 2) - (court.height / 2) * scale;
+            width = court.width * scale;
+            height = court.height * scale;
 
             canvas = createCanvas(width, height);
             canvas.position(canvasX, canvasY);
@@ -83,11 +83,11 @@
         }
 
         function windowResized() {
-            refScale = Math.min(windowWidth / court.width, windowHeight / court.height);
-            let canvasX = (windowWidth / 2) - (court.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (court.height / 2) * refScale;
-            width = court.width * refScale;
-            height = court.height * refScale;
+            scale = Math.min(windowWidth / court.width, windowHeight / court.height);
+            let canvasX = (windowWidth / 2) - (court.width / 2) * scale;
+            let canvasY = (windowHeight / 2) - (court.height / 2) * scale;
+            width = court.width * scale;
+            height = court.height * scale;
 
             resizeCanvas(width, height);
             calculatePositions()
@@ -95,33 +95,33 @@
         }
 
         function calculatePositions() {
-            gravity = 0.5 * refScale;
-            maxPowerX = 19 * refScale;
-            maxPowerY = 29 * refScale;
+            gravity = 0.5 * scale;
+            maxPowerX = 19 * scale;
+            maxPowerY = 29 * scale;
 
             hamper = {
-                left: width - 680 * refScale,
-                right: width - 680 * refScale + hamperImg.width / 2 * refScale,
-                top: 270 * refScale,
-                bottom: 270 * refScale + hamperImg.height / 2 * refScale,
-                width: hamperImg.width / 2 * refScale,
-                height: hamperImg.height / 2 * refScale
+                left: width - 680 * scale,
+                right: width - 680 * scale + hamperImg.width / 2 * scale,
+                top: 270 * scale,
+                bottom: 270 * scale + hamperImg.height / 2 * scale,
+                width: hamperImg.width / 2 * scale,
+                height: hamperImg.height / 2 * scale
             };
 
             girl = {
-                x: 250 * refScale,
-                y: height - 470 * refScale,
-                width: girlEmpty.width / 2 * refScale,
-                height: girlEmpty.height / 2 * refScale
+                x: 250 * scale,
+                y: height - 470 * scale,
+                width: girlEmpty.width / 2 * scale,
+                height: girlEmpty.height / 2 * scale
             };
 
             hamperSock = {
-                left: 250 * refScale,
-                right: 250 * refScale + sockImg.width / 5 * refScale,
-                top: height - 220 * refScale,
-                bottom: height - 220 * refScale + sockImg.height / 5 * refScale,
-                width: sockImg.width / 5 * refScale,
-                height: sockImg.height / 5 * refScale,
+                left: 250 * scale,
+                right: 250 * scale + sockImg.width / 5 * scale,
+                top: height - 220 * scale,
+                bottom: height - 220 * scale + sockImg.height / 5 * scale,
+                width: sockImg.width / 5 * scale,
+                height: sockImg.height / 5 * scale,
                 velocityX: 0,
                 velocityY: 0,
                 inAir: false,
@@ -129,18 +129,18 @@
 
             for (let i = 0; i < num; i++) {
                 socks[i] = {
-                    left: 100 * refScale + i * (sockImg.width / 5 * refScale) * 1.15,
-                    right: 250 * refScale + sockImg.width / 5 * refScale,
-                    top: height - 220 * refScale,
-                    bottom: height - 220 * refScale + sockImg.height / 5 * refScale,
-                    width: sockImg.width / 5 * refScale,
-                    height: sockImg.height / 5 * refScale,
+                    left: 100 * scale + i * (sockImg.width / 5 * scale) * 1.15,
+                    right: 250 * scale + sockImg.width / 5 * scale,
+                    top: height - 220 * scale,
+                    bottom: height - 220 * scale + sockImg.height / 5 * scale,
+                    width: sockImg.width / 5 * scale,
+                    height: sockImg.height / 5 * scale,
                     velocityX: 0,
                     velocityY: 0,
                     inAir: false,
                 };
                 if (hamperCheck < 1) {
-                    socks[i].left = i * (sockImg.width / 5 * refScale) * 1.15;
+                    socks[i].left = i * (sockImg.width / 5 * scale) * 1.15;
                 }
             }
         }
@@ -158,8 +158,8 @@
                     if (!sock.inAir && check > 0.985) {
                         let aimVector = createVector((hamper.left - sock.left + sock.width / 2) / 5,
                             (hamper.top + hamper.height / 2 - sock.top - sock.height / 2) / 5);
-                        sock.velocityX = Math.random() * (5 * refScale - (-5 * refScale)) + (-5 * refScale);
-                        sock.velocityY = Math.random() * (-1 * refScale - (-5 * refScale)) + (-5 * refScale);
+                        sock.velocityX = Math.random() * (5 * scale - (-5 * scale)) + (-5 * scale);
+                        sock.velocityY = Math.random() * (-1 * scale - (-5 * scale)) + (-5 * scale);
                         sock.inAir = true;
                     }
                     image(sockImg, sock.left, sock.top, sock.width, sock.height);
@@ -178,8 +178,8 @@
                         if (!sock.inAir && check > 0.985) {
                             let aimVector = createVector((hamper.left - sock.left + sock.width / 2) / 5,
                                 (hamper.top + hamper.height / 2 - sock.top - sock.height / 2) / 5);
-                            sock.velocityX = Math.random() * (8 * refScale - (-8 * refScale)) + (-8 * refScale);
-                            sock.velocityY = Math.random() * (-1 * refScale - (-8 * refScale)) + (-8 * refScale);
+                            sock.velocityX = Math.random() * (8 * scale - (-8 * scale)) + (-8 * scale);
+                            sock.velocityY = Math.random() * (-1 * scale - (-8 * scale)) + (-8 * scale);
                             sock.inAir = true;
                         }
 
@@ -218,8 +218,8 @@
 
         function styledText(string, x, y) {
             stroke(0, 0, 0);
-            strokeWeight(5);
-            sizeOfText = 130 * refScale;
+            strokeWeight(4);
+            sizeOfText = 130 * scale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);
@@ -240,15 +240,15 @@
                 sock.velocityY += gravity;
             }
             // Collision detection between the sock and the ground
-            if (sock.top > height - 250 * refScale) {
+            if (sock.top > height - 250 * scale) {
                 // Make the sock bounce a bit before stopping
-                if (bounce == true && (abs(sock.velocityX) > 1.5 * refScale || abs(sock.velocityY) > 1.5 * refScale)) {
-                    sock.velocityY = -sock.velocityY / 1.5 * refScale;
-                    sock.velocityX = sock.velocityX / 1.5 * refScale;
+                if (bounce == true && (abs(sock.velocityX) > 1.5 * scale || abs(sock.velocityY) > 1.5 * scale)) {
+                    sock.velocityY = -sock.velocityY / 1.5 * scale;
+                    sock.velocityX = sock.velocityX / 1.5 * scale;
                 }
                 // Stop the sock completely
                 else {
-                    sock.top = height - 250 * refScale;
+                    sock.top = height - 250 * scale;
                     sock.velocityY = 0;
                     sock.velocityX = 0;
                     sock.inAir = false;
@@ -261,11 +261,11 @@
             if (!onScreen(sock)) {
                 // sock is on right of screen
                 if (sock.x > width / 2) {
-                    sock.x = 2 * refScale;
+                    sock.x = 2 * scale;
                 }
                 // sock is on left of screen
                 else {
-                    sock.x = width - 2 * refScale;
+                    sock.x = width - 2 * scale;
                 }
                 sock.velocityX = -sock.velocityX * .9;
             }
@@ -334,8 +334,8 @@
 
         // Reset sock to starting position and make it visible
         function resetSock(sock) {
-            sock.left = 250 * refScale;
-            sock.top = height - 220 * refScale;
+            sock.left = 250 * scale;
+            sock.top = height - 220 * scale;
             sock.velocityX = 0;
             sock.velocityY = 0;
         }

@@ -42,7 +42,7 @@
         let dust, duster, soda, recyling, laundry, hamper;
 
         let num = 4;
-        let refScale;
+        let scale;
 
         function preload() {
             room = loadImage('sprites/room/room.png');
@@ -55,12 +55,12 @@
         }
 
         function setup() {
-            refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
+            scale = Math.min(windowWidth / room.width, windowHeight / room.height);
 
-            canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-            canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
-            width = room.width * refScale;
-            height = room.height * refScale;
+            canvasX = (windowWidth / 2) - (room.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (room.height / 2) * scale;
+            width = room.width * scale;
+            height = room.height * scale;
             calculatePositions();
 
             canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
@@ -70,11 +70,11 @@
         }
 
         function windowResized() {
-            refScale = Math.min(windowWidth / room.width, windowHeight / room.height);
-            canvasX = (windowWidth / 2) - (room.width / 2) * refScale;
-            canvasY = (windowHeight / 2) - (room.height / 2) * refScale;
-            width = room.width * refScale;
-            height = room.height * refScale;
+            scale = Math.min(windowWidth / room.width, windowHeight / room.height);
+            canvasX = (windowWidth / 2) - (room.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (room.height / 2) * scale;
+            width = room.width * scale;
+            height = room.height * scale;
             resizeCanvas(width, height);
             calculatePositions();
             canvas.position(canvasX, canvasY);
@@ -83,57 +83,57 @@
 
         function calculatePositions() {
             hamper = {
-                left: 50 * refScale,
-                top: height - 210 * refScale,
-                width: hamperImg.width / 2.2 * refScale,
-                height: hamperImg.height / 2.2 * refScale
+                left: 50 * scale,
+                top: height - 210 * scale,
+                width: hamperImg.width / 2.2 * scale,
+                height: hamperImg.height / 2.2 * scale
             };
             hamper.right = hamper.left + hamper.width;
             hamper.bottom = hamper.top + hamper.height;
 
             laundry = {
-                left: 620 * refScale,
-                top: height - 280 * refScale,
-                width: laundryImg.width / 2.5 * refScale,
-                height: laundryImg.height / 2.5 * refScale
+                left: 620 * scale,
+                top: height - 280 * scale,
+                width: laundryImg.width / 2.5 * scale,
+                height: laundryImg.height / 2.5 * scale
             };
             laundry.right = laundry.left + laundry.width;
             laundry.bottom = laundry.top + laundry.height;
 
             duster = {
-                x: -60 * refScale,
-                y: -170 * refScale,
-                left: width - refScale * 150,
+                x: -60 * scale,
+                y: -170 * scale,
+                left: width - scale * 150,
                 right: width,
-                top: height - 400 * refScale,
-                bottom: height - 400 * refScale + 280 * refScale,
-                width: dusterImg.width / 3.4 * refScale,
-                height: dusterImg.height / 3.4 * refScale
+                top: height - 400 * scale,
+                bottom: height - 400 * scale + 280 * scale,
+                width: dusterImg.width / 3.4 * scale,
+                height: dusterImg.height / 3.4 * scale
             };
 
             dust = {
                 left: 0,
-                top: 170 * refScale,
-                width: dustImg.width / 4.4 * refScale,
-                height: dustImg.height / 3 * refScale
+                top: 170 * scale,
+                width: dustImg.width / 4.4 * scale,
+                height: dustImg.height / 3 * scale
             };
             dust.right = dust.left + dust.width;
-            dust.bottom = dust.top + 3 * 140 * refScale + dust.height;
+            dust.bottom = dust.top + 3 * 140 * scale + dust.height;
 
             soda = {
-                left: width - 450 * refScale,
-                top: height - 270 * refScale,
-                width: sodaImg.width / 3.5 * refScale,
-                height: sodaImg.height / 3.5 * refScale
+                left: width - 450 * scale,
+                top: height - 270 * scale,
+                width: sodaImg.width / 3.5 * scale,
+                height: sodaImg.height / 3.5 * scale
             };
             soda.right = soda.left + soda.width;
             soda.bottom = soda.top + soda.height;
 
             recyling = {
-                left: 420 * refScale,
-                top: 510 * refScale,
-                width: recylingImg.width / 4.8 * refScale,
-                height: recylingImg.height / 4.8 * refScale
+                left: 420 * scale,
+                top: 510 * scale,
+                width: recylingImg.width / 4.8 * scale,
+                height: recylingImg.height / 4.8 * scale
             };
             recyling.right = recyling.left + recyling.width;
             recyling.bottom = recyling.top + recyling.height;
@@ -157,7 +157,7 @@
                         tint(192, 255, 172);
                     }
                     push();
-                    translate(width / 2 + 680 * refScale, height / 2 + 180 * refScale);
+                    translate(width / 2 + 680 * scale, height / 2 + 180 * scale);
                     rotate(PI * 1.1);
                     image(dusterImg, duster.x, duster.y, duster.width, duster.height);
                     pop();
@@ -167,7 +167,7 @@
                     tint(192, 255, 172);
                 }
                 for (let i = 0; i < num; i++) {
-                    image(dustImg, -5, dust.top + i * 140 * refScale, dust.width, dust.height);
+                    image(dustImg, -5, dust.top + i * 140 * scale, dust.width, dust.height);
                 }
                 tint('none');
             }

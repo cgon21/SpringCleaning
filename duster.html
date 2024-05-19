@@ -67,14 +67,13 @@
         }
 
         function styledText(string, x, y) {
-            sizeOfText = 16 * scale;
+            stroke(0, 0, 0);
+            strokeWeight(4);
+            sizeOfText = 18 * scale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);
             textFont('Papyrus');
-            fill(0);
-            text(string, x + 1.5 * scale, y);
-            text(string, x - 1.5 * scale, y);
             fill(255);
             text(string, x, y);
         }

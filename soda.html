@@ -44,7 +44,7 @@
         let index = 0;
 
         let gravity;
-        let refScale;
+        let scale;
         let width;
         let height;
 
@@ -59,12 +59,12 @@
         function setup() {
             frameRate(60);
 
-            refScale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
+            scale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
 
-            let canvasX = (windowWidth / 2) - (circus.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (circus.height / 2) * refScale;
-            width = circus.width * refScale;
-            height = circus.height * refScale;
+            let canvasX = (windowWidth / 2) - (circus.width / 2) * scale;
+            let canvasY = (windowHeight / 2) - (circus.height / 2) * scale;
+            width = circus.width * scale;
+            height = circus.height * scale;
 
             canvas = createCanvas(width, height);
             canvas.position(canvasX, canvasY);
@@ -76,11 +76,11 @@
         }
 
         function windowResized() {
-            refScale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
-            let canvasX = (windowWidth / 2) - (circus.width / 2) * refScale;
-            let canvasY = (windowHeight / 2) - (circus.height / 2) * refScale;
-            width = circus.width * refScale;
-            height = circus.height * refScale;
+            scale = Math.min(windowWidth / circus.width, windowHeight / circus.height);
+            let canvasX = (windowWidth / 2) - (circus.width / 2) * scale;
+            let canvasY = (windowHeight / 2) - (circus.height / 2) * scale;
+            width = circus.width * scale;
+            height = circus.height * scale;
 
             resizeCanvas(width, height);
             calculatePositions()
@@ -88,15 +88,15 @@
         }
 
         function calculatePositions() {
-            gravity = 0.5 * refScale;
-            maxPowerX = 19 * refScale;
-            maxPowerY = 29 * refScale;
+            gravity = 0.5 * scale;
+            maxPowerX = 19 * scale;
+            maxPowerY = 29 * scale;
 
             recycle = {
-                left: width - 680 * refScale,
-                top: 710 * refScale,
-                width: recycleImg.width / 2.1 * refScale,
-                height: recycleImg.height / 2.1 * refScale
+                left: width - 680 * scale,
+                top: 710 * scale,
+                width: recycleImg.width / 2.1 * scale,
+                height: recycleImg.height / 2.1 * scale
             };
             recycle.left = width / 2 - recycle.width / 2;
             recycle.right = recycle.left + recycle.width;
@@ -104,9 +104,9 @@
 
             cannon = {
                 left: width / 2,
-                top: height / 2 - 90 * refScale,
-                width: cannonImg.width / 6 * refScale,
-                height: cannonImg.height / 6 * refScale,
+                top: height / 2 - 90 * scale,
+                width: cannonImg.width / 6 * scale,
+                height: cannonImg.height / 6 * scale,
                 scale: 1.005,
                 count: 0
             };
@@ -116,20 +116,20 @@
             cannon.bottom = cannon.top + cannon.height;
 
             defaultSoda = {
-                left: width - 680 * refScale,
-                top: 270 * refScale,
-                width: sodaImg.width / 5 * refScale,
-                height: sodaImg.height / 5 * refScale
+                left: width - 680 * scale,
+                top: 270 * scale,
+                width: sodaImg.width / 5 * scale,
+                height: sodaImg.height / 5 * scale
             };
             defaultSoda.right = defaultSoda.left + defaultSoda.width;
             defaultSoda.bottom = defaultSoda.top + defaultSoda.height;
 
             for (let i = 0; i < 15; i++) {
                 sodas[i] = {
-                    left: width - 680 * refScale,
-                    top: 270 * refScale,
-                    width: sodaImg.width / 25 * refScale,
-                    height: sodaImg.height / 25 * refScale,
+                    left: width - 680 * scale,
+                    top: 270 * scale,
+                    width: sodaImg.width / 25 * scale,
+                    height: sodaImg.height / 25 * scale,
                     velocityX: 0,
                     velocityY: 0,
                     rotation: 0,
@@ -162,10 +162,10 @@
                     sodaMovement(soda);
                     let check = Math.random(1);
                     if (!soda.inAir && check > 0.985) {
-                        soda.velocityY = Math.random() * (-3 * refScale - (-17 * refScale)) + (-17 * refScale);
+                        soda.velocityY = Math.random() * (-3 * scale - (-17 * scale)) + (-17 * scale);
                         soda.inAir = true;
                     }
-                    image(sodaImg, soda.x * refScale, soda.y * refScale, defaultSoda.width * soda.scale, defaultSoda.height * soda.scale);
+                    image(sodaImg, soda.x * scale, soda.y * scale, defaultSoda.width * soda.scale, defaultSoda.height * soda.scale);
                 });
                 document.getElementById("returnButton").style.display = "block";
             } else {
@@ -176,7 +176,7 @@
                     document.getElementById("returnButton").style.display = "block";
                 }
                 else {
-                    if (cannon.width > cannonImg.width / 6 * refScale && cannon.scale == 1.005) {
+                    if (cannon.width > cannonImg.width / 6 * scale && cannon.scale == 1.005) {
                         cannon.scale = 0.995;
                         cannon.count++;
                         if (cannon.count == 2) {
@@ -184,7 +184,7 @@
                             launchSoda();
                         }
                     }
-                    if (cannon.width < cannonImg.width / 7.5 * refScale && cannon.scale == 0.995) {
+                    if (cannon.width < cannonImg.width / 7.5 * scale && cannon.scale == 0.995) {
                         cannon.scale = 1.005;
                     }
                     cannon.width *= cannon.scale;
@@ -202,8 +202,8 @@
 
                         // just getting launched out of cannon - spawn on the cannon hole
                         if (soda.launched == 0) {
-                            soda.width = sodaImg.width / 25 * refScale;
-                            soda.height = sodaImg.height / 25 * refScale;
+                            soda.width = sodaImg.width / 25 * scale;
+                            soda.height = sodaImg.height / 25 * scale;
                             soda.left = width / 2 - soda.width / 2;
                             soda.top = cannon.top;
                             soda.right = soda.left + soda.width;
@@ -212,12 +212,12 @@
                         }
                         // spawned infront of cannon and need to move upwards
                         else if (soda.launched == 1) {
-                            soda.velocityY = -8 * refScale; // soda moves upwards
+                            soda.velocityY = -8 * scale; // soda moves upwards
                             // Check if soda has gone past the top border
-                            if (soda.bottom < -sodaImg.width / 6 * refScale) {
+                            if (soda.bottom < -sodaImg.width / 6 * scale) {
                                 soda.launched = 2;
-                                soda.width = sodaImg.width / 6 * refScale;
-                                soda.height = sodaImg.height / 6 * refScale;
+                                soda.width = sodaImg.width / 6 * scale;
+                                soda.height = sodaImg.height / 6 * scale;
                                 if (Math.random() < 0.5) {
                                     soda.left = Math.random() * ((width / 2 - soda.width / 2) - soda.width) + soda.width;
                                 } else {
@@ -228,7 +228,7 @@
                         }
                         // soda is falling
                         else if (soda.launched == 2) {
-                            soda.velocityY = 6 * refScale;
+                            soda.velocityY = 6 * scale;
                             checkLanding(soda);
                             if (soda.top > height) {
                                 soda.launched = -1;
@@ -289,8 +289,8 @@
 
         function styledText(string, x, y) {
             stroke(0, 0, 0);
-            strokeWeight(5);
-            sizeOfText = 130 * refScale;
+            strokeWeight(4);
+            sizeOfText = 130 * scale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);

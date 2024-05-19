@@ -35,12 +35,12 @@
         }
 
         function setup() {
-            refScale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
+            scale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
 
-            canvasX = (windowWidth / 2) - (backdrop.width / 2) * refScale;
-            canvasY = (windowHeight / 2) - (backdrop.height / 2) * refScale;
-            width = backdrop.width * refScale;
-            height = backdrop.height * refScale;
+            canvasX = (windowWidth / 2) - (backdrop.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (backdrop.height / 2) * scale;
+            width = backdrop.width * scale;
+            height = backdrop.height * scale;
 
             canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
@@ -55,11 +55,11 @@
         }
 
         function windowResized() {
-            refScale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
-            canvasX = (windowWidth / 2) - (backdrop.width / 2) * refScale;
-            canvasY = (windowHeight / 2) - (backdrop.height / 2) * refScale;
-            width = backdrop.width * refScale;
-            height = backdrop.height * refScale;
+            scale = Math.min(windowWidth / backdrop.width, windowHeight / backdrop.height);
+            canvasX = (windowWidth / 2) - (backdrop.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (backdrop.height / 2) * scale;
+            width = backdrop.width * scale;
+            height = backdrop.height * scale;
 
             resizeCanvas(width, height);
             canvas.position(canvasX, canvasY);
@@ -67,14 +67,13 @@
         }
 
         function styledText(string, x, y) {
-            sizeOfText = 16 * refScale;
+            stroke(0, 0, 0);
+            strokeWeight(4);
+            sizeOfText = 18 * scale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);
             textFont('Papyrus');
-            fill(0);
-            text(string, x + 1.5 * refScale, y);
-            text(string, x - 1.5 * refScale, y);
             fill(255);
             text(string, x, y);
         }
@@ -82,7 +81,7 @@
         function draw() {
             clear();
             background(backdrop); // set the background every frame
-            image(hamper, width / 2 - hamper.width / 8 * refScale, height - hamper.height / 3 * refScale, hamper.width / 4 * refScale, hamper.height / 4 * refScale);
+            image(hamper, width / 2 - hamper.width / 8 * scale, height - hamper.height / 3 * scale, hamper.width / 4 * scale, hamper.height / 4 * scale);
 
             switch (convo) {
                 case 0:

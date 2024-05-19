@@ -6,36 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recycling</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #returnButton {
-            display: none;
-            position: fixed;
-            top: 80%;
-            left: 50%;
-            transform: translate(-50%);
-            padding: 2vmin;
-            font-size: 5vmin;
-            color: white;
-            background-color: black;
-            border: none;
-            border-radius: 3vmin;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        #returnButton:hover {
-            background-color: pink;
-        }
-    </style>
+    <link rel="stylesheet" href="buttons.css">
 </head>
 
 <body>
@@ -45,6 +16,8 @@
         if (dusterCheck < '0') {
             localStorage.setItem('dusterCheck', '0');
         }
+        let canvasX;
+        let canvasY;
 
         let shelf;
         let dustBunnyImages = [];
@@ -84,12 +57,12 @@
 
             scale = Math.min(windowWidth / shelf.width, windowHeight / shelf.height);
 
-            let canvasX = (windowWidth / 2) - (shelf.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (shelf.height / 2) * scale;
+            canvasX = (windowWidth / 2) - (shelf.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (shelf.height / 2) * scale;
             width = shelf.width * scale;
             height = shelf.height * scale;
 
-            canvas = createCanvas(width, height);
+            canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
 
             for (let i = 0; i < num; i++) {
@@ -104,12 +77,13 @@
 
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
+            positionButton();
         }
 
         function windowResized() {
             scale = Math.min(windowWidth / shelf.width, windowHeight / shelf.height);
-            let canvasX = (windowWidth / 2) - (shelf.width / 2) * scale;
-            let canvasY = (windowHeight / 2) - (shelf.height / 2) * scale;
+            canvasX = (windowWidth / 2) - (shelf.width / 2) * scale;
+            canvasY = (windowHeight / 2) - (shelf.height / 2) * scale;
             width = shelf.width * scale;
             height = shelf.height * scale;
 
@@ -119,6 +93,7 @@
             bunnySize = 150 * scale;
             dusterSize = 200 * scale;
             radius = 350 * scale;
+            positionButton();
         }
 
         function draw() {
@@ -159,17 +134,7 @@
                     image(duster, width / 2 + 100 * scale, height / 2 - 950 * scale, duster.width * scale, duster.height * scale);
                     pop();
 
-                    sizeOfText = 180 * scale;
-                    textSize(sizeOfText);
-                    textStyle(BOLD);
-                    textAlign(CENTER);
-                    textFont('Papyrus');
-                    fill(0);
-                    text("All Clean!", width / 2 + 10 * scale, height / 2);
-                    text("All Clean!", width / 2 - 10 * scale, height / 2);
-
-                    fill(255);
-                    text("All Clean!", width / 2, height / 2);
+                    styledText("All Clean!", width / 2 + 10 * scale, height / 2);
 
                     localStorage.setItem('dusterCheck', '2');
                     document.getElementById("returnButton").style.display = "block";
@@ -258,6 +223,19 @@
             }
         }
 
+        function styledText(string, x, y) {
+            stroke(0, 0, 0);
+            strokeWeight(4);
+            sizeOfText = 130 * scale;
+            textSize(sizeOfText);
+            textStyle(BOLD);
+            textAlign(CENTER);
+            textFont('Papyrus');
+            fill(255);
+            text(string, x, y);
+        }
+
+
         // Check if bunny is still on screen
         function onScreen(bunny) {
             if (bunny.x >= -bunnySize && bunny.x <= width + bunnySize && bunny.y >= 0 && bunny.y <= height) {
@@ -266,6 +244,14 @@
                 return false;
             }
         }
+
+        function positionButton() {
+            const canvas = document.getElementById('mainCanvas');
+            const returnButton = document.getElementById('returnButton');
+            const canvasRect = canvas.getBoundingClientRect();
+            returnButton.style.top = `${canvasY + height / 1.2}px`;
+            returnButton.style.left = `${canvasX + width / 2}px`;
+        };
 
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('returnButton');
