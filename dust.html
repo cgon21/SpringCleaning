@@ -16,6 +16,8 @@
 
 <body>
     <button id="returnButton">Return to Room</button>
+    <button id="start">Continue</button>
+
     <script>
         var dusterCheck = localStorage.getItem('dusterCheck');
         if (dusterCheck < '0') {
@@ -109,6 +111,7 @@
             rect(0, 0, canvas.width, canvas.height);
 
             if (dusterCheck <= '0') {
+                document.getElementById("start").style.display = "none";
                 for (let i = dustBunnies.length - 1; i >= 0; i--) {
                     let bunny = dustBunnies[i];
                     let bunnyImage = dustBunnyImages[i];
@@ -132,7 +135,18 @@
                 styledText("I'll need some help to dust this...", width / 2, height / 2.12, 80);
                 document.getElementById("returnButton").style.display = "block";
 
-            } else {
+            }
+            else if (dusterCheck === '1') {
+                styledText("Dust off the bookshelf!", width / 2, height / 2.7, 80);
+                styledText("Press and hold your mouse to use duster", width / 2, height / 2.1, 80);
+                styledText("Dust all the bunnies off screen!", width / 2, height / 1.71, 80);
+                document.getElementById("start").style.display = "block";
+                document.getElementById("returnButton").style.display = "none";
+
+            }
+            else {
+                document.getElementById("start").style.display = "none";
+
                 // once every dust bunny has been sucked up, display text to say, "All clean!"
                 if (dustBunnies.length < 1) {
                     push();
@@ -257,12 +271,27 @@
             const canvasRect = canvas.getBoundingClientRect();
             returnButton.style.top = `${canvasY + height / 1.2}px`;
             returnButton.style.left = `${canvasX + width / 2}px`;
+
+            const startButton = document.getElementById('start');
+            startButton.style.top = `${canvasY + height / 1.2}px`;
+            startButton.style.left = `${canvasX + width / 2}px`;
+            if (dusterCheck === '1') {
+                document.getElementById('start').style.display = 'none';
+            }
         };
 
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('returnButton');
             returnButton.addEventListener('click', function () {
                 window.location.href = 'room.html';
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var startButton = document.getElementById('start');
+            startButton.addEventListener('click', function () {
+                localStorage.setItem('dusterCheck', '2');
+                window.location.href = 'dust.html';
             });
         });
 

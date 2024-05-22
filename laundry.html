@@ -16,6 +16,8 @@
 
 <body>
     <button id="returnButton">Return to Room</button>
+    <button id="start">Continue</button>
+
     <script>
         var hamperCheck = localStorage.getItem('hamperCheck');
         if (hamperCheck === '-1') {
@@ -135,9 +137,9 @@
         function draw() {
             background(court); // set the background every frame
 
-            // hamperCheck = '0';
             if (hamperCheck <= '0') {
                 // Hamper is not present
+                document.getElementById("start").style.display = "none";
                 socks.forEach(sock => {
                     sockMovement(sock);
                     checkCollisions(sock);
@@ -153,9 +155,29 @@
                 styledText("I'll need some help gathering these...", width / 2, height / 2.12, 80);
                 document.getElementById("returnButton").style.display = "block";
             }
+            else if (hamperCheck === '1') {
+                socks.forEach(sock => {
+                    sockMovement(sock);
+                    checkCollisions(sock);
+                    let check = Math.random(1);
+                    if (!sock.inAir && check > 0.985) {
+                        sock.velocityX = Math.random() * (5 * scale - (-5 * scale)) + (-5 * scale);
+                        sock.velocityY = Math.random() * (-1 * scale - (-5 * scale)) + (-5 * scale);
+                        sock.inAir = true;
+                    }
+                    image(sockImg, sock.left, sock.top, sock.width, sock.height);
+                })
+                image(hamperImg, hamper.left, hamper.top, hamper.width, hamper.height);
 
+                styledText("Toss the dirty socks", width / 3.5, height / 2.7, 80);
+                styledText("into the hamper!", width / 3.5, height / 2.1, 80);
+                styledText("Click and hold to aim!", width / 3.5, height / 1.71, 80);
+                document.getElementById("start").style.display = "block";
+                document.getElementById("returnButton").style.display = "none";
+            }
             // Hamper is here
             else {
+                document.getElementById("start").style.display = "none";
                 document.getElementById("returnButton").style.display = "none";
                 bounce = true;
                 socks.forEach(sock => {
@@ -330,7 +352,7 @@
 
         // Mouse functions for aiming and shooting
         function mousePressed() {
-            if (!socks[0].inAir && hamperCheck > '0') {
+            if (!socks[0].inAir && hamperCheck > '1') {
                 isAiming = true;
             }
         }
@@ -352,12 +374,27 @@
             const canvasRect = canvas.getBoundingClientRect();
             returnButton.style.top = `${canvasY + height / 1.2}px`;
             returnButton.style.left = `${canvasX + width / 2}px`;
+
+            const startButton = document.getElementById('start');
+            startButton.style.top = `${canvasY + height / 1.2}px`;
+            startButton.style.left = `${canvasX + width / 2}px`;
+            if (hamperCheck === '1') {
+                document.getElementById('start').style.display = 'none';
+            }
         };
 
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('returnButton');
             returnButton.addEventListener('click', function () {
                 window.location.href = 'room.html';
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var startButton = document.getElementById('start');
+            startButton.addEventListener('click', function () {
+                localStorage.setItem('hamperCheck', '2');
+                window.location.href = 'laundry.html';
             });
         });
 
