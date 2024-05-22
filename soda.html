@@ -187,7 +187,24 @@
                 document.getElementById("start").style.display = "none";
                 document.getElementById("returnButton").style.display = "none";
                 if (sodas.length < 1) {
-                    image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
+                    image(recycleImg, width / 2 - recycle.width, height / 2 + recycle.height / 2, recycle.width * 2, recycle.height * 2);
+
+                    push();
+                    translate(width / 2 - recycle.width + 250 * scale, height / 2 + recycle.height / 2 - 65 * scale);
+                    rotate(-0.2); // Slight rotation
+                    imageMode(CENTER);
+                    image(sodaImg, 0, 0, defaultSoda.width * 1.3, defaultSoda.height * 1.3);
+                    pop();
+
+                    push();
+                    translate(width / 2 - recycle.width + 690 * scale, height / 2 + recycle.height / 2 - 70 * scale);
+                    rotate(0.2); // Slight rotation
+                    imageMode(CENTER);
+                    image(sodaImg, 0, 0, defaultSoda.width * 1.3, defaultSoda.height * 1.3);
+                    pop();
+
+                    image(sodaImg, width / 2 - recycle.width + 340 * scale, height / 2 + recycle.height / 2 - 200 * scale, defaultSoda.width * 1.3, defaultSoda.height * 1.3);
+
                     styledText("Cans Recycled!", width / 2, height / 2.7, 130);
                     localStorage.setItem('recycleCheck', '2');
                     document.getElementById("returnButton").style.display = "block";
