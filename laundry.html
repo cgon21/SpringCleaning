@@ -149,6 +149,8 @@
                     }
                     image(sockImg, sock.left, sock.top, sock.width, sock.height);
                 })
+                styledText("When's the last time I did laundry?", width / 2, height / 2.7, 80);
+                styledText("I'll need some help gathering these...", width / 2, height / 2.12, 80);
                 document.getElementById("returnButton").style.display = "block";
             }
 
@@ -188,8 +190,8 @@
 
                 // socks all clean
                 if (socks.length < 1) {
-                    styledText("Laundry", width / 3.5, height / 3);
-                    styledText("Picked Up!", width / 3.5, height / 1.9);
+                    styledText("Laundry", width / 3.5, height / 3, 130);
+                    styledText("Picked Up!", width / 3.5, height / 1.9, 130);
                     localStorage.setItem('hamperCheck', '2');
                     document.getElementById("returnButton").style.display = "block";
 
@@ -202,10 +204,10 @@
 
         }
 
-        function styledText(string, x, y) {
+        function styledText(string, x, y, size) {
             stroke(0, 0, 0);
             strokeWeight(4);
-            sizeOfText = 130 * scale;
+            sizeOfText = size * scale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);

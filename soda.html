@@ -167,12 +167,14 @@
                     }
                     image(sodaImg, soda.x * scale, soda.y * scale, defaultSoda.width * soda.scale, defaultSoda.height * soda.scale);
                 });
+                styledText("A bunch of empty cans.", width / 2, height / 2.7, 80);
+                styledText("I'll need some help to recycle these...", width / 2, height / 2.12, 80);
                 document.getElementById("returnButton").style.display = "block";
             } else {
                 document.getElementById("returnButton").style.display = "none";
                 if (sodas.length < 1) {
                     image(cannonImg, cannon.left, cannon.top, cannon.width, cannon.height);
-                    styledText("Cans Recycled!", width / 2, height / 2.7);
+                    styledText("Cans Recycled!", width / 2, height / 2.7, 130);
                     localStorage.setItem('recycleCheck', '2');
                     document.getElementById("returnButton").style.display = "block";
                 }
@@ -294,10 +296,10 @@
 
         }
 
-        function styledText(string, x, y) {
+        function styledText(string, x, y, size) {
             stroke(0, 0, 0);
             strokeWeight(4);
-            sizeOfText = 130 * scale;
+            sizeOfText = size * scale;
             textSize(sizeOfText);
             textStyle(BOLD);
             textAlign(CENTER);
