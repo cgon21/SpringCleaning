@@ -161,6 +161,10 @@
         }
 
         function draw() {
+            if (recycleCheck > '1') {
+                document.body.style.cursor = 'none';
+            }
+
             background(circus); // set the background every frame
 
             if (recycleCheck <= '0') {
@@ -192,6 +196,8 @@
                 document.getElementById("start").style.display = "none";
                 document.getElementById("returnButton").style.display = "none";
                 if (sodas.length < 1) {
+                    document.body.style.cursor = 'url("sprites/room/cursor1.png"), auto';
+
                     image(recycleImg, width / 2 - recycle.width, height / 2 + recycle.height / 2, recycle.width * 2, recycle.height * 2);
 
                     push();

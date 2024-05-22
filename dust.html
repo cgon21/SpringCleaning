@@ -110,6 +110,10 @@
         }
 
         function draw() {
+            if (dusterCheck > '1') {
+                document.body.style.cursor = 'none';
+            }
+
             background(shelf); // set the background every frame
 
             // makes the screen look dirty until all dust bunnies are sucked up
@@ -153,6 +157,8 @@
 
                 // once every dust bunny has been sucked up, display text to say, "All clean!"
                 if (dustBunnies.length < 1) {
+                    document.body.style.cursor = 'url("sprites/room/cursor1.png"), auto';
+
                     push();
                     rotate(45);
                     imageMode(CENTER);
