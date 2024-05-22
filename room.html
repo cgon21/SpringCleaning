@@ -159,6 +159,11 @@
             clear();
             background(room);
 
+            if (dusterCheck === '2' && recycleCheck === '2' && hamperCheck === '2') {
+                styledText('Room Cleaned!', width / 2, height / 2.5, 130);
+                styledText('Well done! Your room is clean', width / 2, height / 1.5, 80);
+                styledText('(Let\'s see how long it lasts)', width / 2, height / 1.25, 80);
+            }
             let mouseOverDuster = mouseX >= duster.left && mouseX <= duster.right && mouseY >= duster.top && mouseY <= duster.bottom;
             let mouseOverDust = mouseX >= dust.left && mouseX <= dust.right && mouseY >= dust.top && mouseY <= dust.bottom;
             let mouseOverHamper = mouseX >= hamper.left && mouseX <= hamper.right && mouseY >= hamper.top && mouseY <= hamper.bottom;
