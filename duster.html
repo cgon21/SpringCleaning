@@ -91,32 +91,32 @@
         function draw() {
             clear();
             background(backdrop);
-            image(duster, width / 2 - duster.width / 8 * scale, height - duster.height / 3 * scale, duster.width / 4 * scale, duster.height / 4 * scale);
+            image(duster, width / 2 - duster.width / 8 * scale, height - duster.height / 2.7 * scale, duster.width / 4 * scale, duster.height / 4 * scale);
 
             switch (convo) {
                 case 0:
-                    styledText("Can I help you?", width / 2, height / 1.21);
+                    styledText("Can I help you?", width / 2, height / 1.35);
                     break;
                 case 1:
-                    styledText("Excuse me?", width / 2, height / 1.21);
+                    styledText("Excuse me?", width / 2, height / 1.35);
                     break;
                 case 2:
-                    styledText("Of course, but what's in it for me?", width / 2, height / 1.21);
+                    styledText("Of course, but what's in it for me?", width / 2, height / 1.35);
                     break;
                 case 3:
-                    styledText("No thanks", width / 2, height / 1.21);
+                    styledText("No thanks", width / 2, height / 1.35);
                     break;
                 case 4:
-                    styledText("Sure, why not?", width / 2, height / 1.21);
+                    styledText("Sure, why not?", width / 2, height / 1.35);
                     break;
                 case 5:
-                    styledText("Yeaaa, no.", width / 2, height / 1.21);
+                    styledText("Yeaaa, no.", width / 2, height / 1.35);
                     break;
                 case 6:
-                    styledText("Uh huh?", width / 2, height / 1.21);
+                    styledText("Uh huh?", width / 2, height / 1.35);
                     break;
                 case 7:
-                    styledText("Whatever...", width / 2, height / 1.21);
+                    styledText("Whatever...", width / 2, height / 1.35);
                     break;
                 default:
             }
@@ -128,14 +128,14 @@
                 const canvasRect = canvas.getBoundingClientRect();
 
                 const buttons = [
-                    { id: 'uh', top: canvasY + height / 1.125 },
-                    { id: 'niceStart', top: canvasY + height / 1.08 },
-                    { id: 'meanStart', top: canvasY + height / 1.17 },
-                    { id: 'sorry', top: canvasY + height / 1.08 },
-                    { id: 'meanAgain', top: canvasY + height / 1.17 },
-                    { id: 'niceAgain', top: canvasY + height / 1.08 },
-                    { id: 'meanEnd', top: canvasY + height / 1.17 },
-                    { id: 'return', top: canvasY + height / 1.125 },
+                    { id: 'uh', top: canvasY + height / 1.22 },
+                    { id: 'niceStart', top: canvasY + height / 1.28 },
+                    { id: 'meanStart', top: canvasY + height / 1.16 },
+                    { id: 'sorry', top: canvasY + height / 1.16 },
+                    { id: 'meanAgain', top: canvasY + height / 1.28 },
+                    { id: 'niceAgain', top: canvasY + height / 1.16 },
+                    { id: 'meanEnd', top: canvasY + height / 1.28 },
+                    { id: 'return', top: canvasY + height / 1.22 },
                 ];
 
                 buttons.forEach(button => {

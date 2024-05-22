@@ -90,32 +90,32 @@
         function draw() {
             clear();
             background(backdrop); // set the background every frame
-            image(hamper, width / 2 - hamper.width / 8 * scale, height - hamper.height / 3 * scale, hamper.width / 4 * scale, hamper.height / 4 * scale);
+            image(hamper, width / 2 - hamper.width / 8 * scale, height - hamper.height / 2.7 * scale, hamper.width / 4 * scale, hamper.height / 4 * scale);
 
             switch (convo) {
                 case 0:
-                    styledText("Howdy stranger!", width / 2, height / 1.21);
+                    styledText("Howdy stranger!", width / 2, height / 1.35);
                     break;
                 case 1:
-                    styledText("The what?", width / 2, height / 1.21);
+                    styledText("The what?", width / 2, height / 1.35);
                     break;
                 case 2:
-                    styledText("Oh sure! I don't mind", width / 2, height / 1.21);
+                    styledText("Oh sure! I don't mind", width / 2, height / 1.35);
                     break;
                 case 3:
-                    styledText("Uh... okay", width / 2, height / 1.21);
+                    styledText("Uh... okay", width / 2, height / 1.35);
                     break;
                 case 4:
-                    styledText("Let's go!", width / 2, height / 1.21);
+                    styledText("Let's go!", width / 2, height / 1.35);
                     break;
                 case 5:
-                    styledText("... nevermind", width / 2, height / 1.21);
+                    styledText("... nevermind", width / 2, height / 1.35);
                     break;
                 case 6:
-                    styledText("Yea?", width / 2, height / 1.21);
+                    styledText("Yea?", width / 2, height / 1.35);
                     break;
                 case 7:
-                    styledText("Nope, sorry!", width / 2, height / 1.21);
+                    styledText("Nope, sorry!", width / 2, height / 1.35);
                     break;
                 default:
             }
@@ -127,14 +127,14 @@
                 const canvasRect = canvas.getBoundingClientRect();
 
                 const buttons = [
-                    { id: 'uh', top: canvasY + height / 1.125 },
-                    { id: 'niceStart', top: canvasY + height / 1.08 },
-                    { id: 'meanStart', top: canvasY + height / 1.17 },
-                    { id: 'sorry', top: canvasY + height / 1.08 },
-                    { id: 'meanAgain', top: canvasY + height / 1.17 },
-                    { id: 'niceAgain', top: canvasY + height / 1.08 },
-                    { id: 'meanEnd', top: canvasY + height / 1.17 },
-                    { id: 'return', top: canvasY + height / 1.125 },
+                    { id: 'uh', top: canvasY + height / 1.22 },
+                    { id: 'niceStart', top: canvasY + height / 1.28 },
+                    { id: 'meanStart', top: canvasY + height / 1.16 },
+                    { id: 'sorry', top: canvasY + height / 1.16 },
+                    { id: 'meanAgain', top: canvasY + height / 1.28 },
+                    { id: 'niceAgain', top: canvasY + height / 1.16 },
+                    { id: 'meanEnd', top: canvasY + height / 1.28 },
+                    { id: 'return', top: canvasY + height / 1.22 },
                 ];
 
                 buttons.forEach(button => {

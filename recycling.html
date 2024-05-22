@@ -90,32 +90,32 @@
         function draw() {
             clear();
             background(backdrop); // set the background every frame
-            image(recycle, width / 2 - recycle.width / 8 * scale, height - recycle.height / 3 * scale, recycle.width / 4 * scale, recycle.height / 4 * scale);
+            image(recycle, width / 2 - recycle.width / 8 * scale, height - recycle.height / 2.7 * scale, recycle.width / 4 * scale, recycle.height / 4 * scale);
 
             switch (convo) {
                 case 0:
-                    styledText("AH!  Sorry you startled me", width / 2, height / 1.21);
+                    styledText("AH!  Sorry you startled me", width / 2, height / 1.35);
                     break;
                 case 1:
-                    styledText("Huh?", width / 2, height / 1.21);
+                    styledText("Huh?", width / 2, height / 1.35);
                     break;
                 case 2:
-                    styledText("Oh! Thank you so much!", width / 2, height / 1.21);
+                    styledText("Oh! Thank you so much!", width / 2, height / 1.35);
                     break;
                 case 3:
-                    styledText("(´•╭╮•`)", width / 2, height / 1.21);
+                    styledText("(´•╭╮•`)", width / 2, height / 1.35);
                     break;
                 case 4:
-                    styledText("Uh... Yea actually I can!", width / 2, height / 1.21);
+                    styledText("Uh... Yea actually I can!", width / 2, height / 1.35);
                     break;
                 case 5:
-                    styledText("Oh...", width / 2, height / 1.21);
+                    styledText("Oh...", width / 2, height / 1.35);
                     break;
                 case 6:
-                    styledText("Oh sorry, go ahead", width / 2, height / 1.21);
+                    styledText("Oh sorry, go ahead", width / 2, height / 1.35);
                     break;
                 case 7:
-                    styledText("Oh... okay!", width / 2, height / 1.21);
+                    styledText("Oh... okay!", width / 2, height / 1.35);
                     break;
                 default:
             }
@@ -127,14 +127,14 @@
                 const canvasRect = canvas.getBoundingClientRect();
 
                 const buttons = [
-                    { id: 'uh', top: canvasY + height / 1.125 },
-                    { id: 'niceStart', top: canvasY + height / 1.08 },
-                    { id: 'meanStart', top: canvasY + height / 1.17 },
-                    { id: 'sorry', top: canvasY + height / 1.08 },
-                    { id: 'meanAgain', top: canvasY + height / 1.17 },
-                    { id: 'niceAgain', top: canvasY + height / 1.08 },
-                    { id: 'meanEnd', top: canvasY + height / 1.17 },
-                    { id: 'return', top: canvasY + height / 1.125 },
+                    { id: 'uh', top: canvasY + height / 1.22 },
+                    { id: 'niceStart', top: canvasY + height / 1.28 },
+                    { id: 'meanStart', top: canvasY + height / 1.16 },
+                    { id: 'sorry', top: canvasY + height / 1.16 },
+                    { id: 'meanAgain', top: canvasY + height / 1.28 },
+                    { id: 'niceAgain', top: canvasY + height / 1.16 },
+                    { id: 'meanEnd', top: canvasY + height / 1.28 },
+                    { id: 'return', top: canvasY + height / 1.22 },
                 ];
 
                 buttons.forEach(button => {
