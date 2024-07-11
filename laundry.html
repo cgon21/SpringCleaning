@@ -35,6 +35,8 @@
         let sockImg, hamperSock, hamper, hamperImg, girl, girlEmpty, girlHolding;
         let socks = [];
         const num = 6;
+        let indicator = 0;
+        let flip = 0;
 
         let gravity;
         let isAiming = false;
@@ -197,7 +199,6 @@
                             sock.velocityY = Math.random() * (-1 * scale - (-8 * scale)) + (-8 * scale);
                             sock.inAir = true;
                         }
-
                         image(sockImg, sock.left, sock.top, sock.width, sock.height);
                     }
                     else {
@@ -207,6 +208,20 @@
                             drawTrajectory(sock);
                         }
                         else if (sock) {
+                            if (indicator < 1 && flip == 0 && !sock.inAir) {
+                                indicator += 0.04;
+                            }
+                            else if (!sock.inAir) {
+                                flip = 1;
+                                if (indicator > 0) {
+                                    indicator -= 0.04;
+                                }
+                                else {
+                                    flip = 0;
+                                }
+                                styledText("Help me!", sock.left + sock.width / 2, sock.top - sock.height / 5, 50);
+                            }
+
                             image(sockImg, sock.left, sock.top, sock.width, sock.height);
                             if (sock.inAir) {
                                 image(girlEmpty, girl.x - girl.width / 3, girl.y, girl.width, girl.height);
