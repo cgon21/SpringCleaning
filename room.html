@@ -60,20 +60,23 @@
         }
 
         let room;
-        let dustImg, dusterImg, sodaImg, recylingImg, laundryImg, hamperImg;
-        let dust, duster, soda, recyling, laundry, hamper;
+        let dustImg, dusterImg, dusterHumanImg, sodaImg, recylingImg, recycleHumanImg, laundryImg, hamperImg, hamperHumanImg;
+        let dust, duster, soda, recyling, laundry, hamper, human;
 
         let num = 4;
         let scale;
 
         function preload() {
             room = loadImage('sprites/room/room.png');
+            dustImg = loadImage('sprites/room/dust.png');
             dusterImg = loadImage('sprites/room/dusterIRL.png');
-            hamperImg = loadImage('sprites/room/hamperIRL.png');
+            dusterHumanImg = loadImage('sprites/characters/duster.png');
             sodaImg = loadImage('sprites/room/sodaPile.png');
             recylingImg = loadImage('sprites/room/recyclingBin.png');
+            recycleHumanImg = loadImage('sprites/characters/recycle.png');
             laundryImg = loadImage('sprites/room/laundryPile.png');
-            dustImg = loadImage('sprites/room/dust.png');
+            hamperImg = loadImage('sprites/room/hamperIRL.png');
+            hamperHumanImg = loadImage('sprites/characters/hamper.png');
         }
 
         function setup() {
@@ -104,23 +107,14 @@
         }
 
         function calculatePositions() {
-            hamper = {
-                left: 50 * scale,
-                top: height - 210 * scale,
-                width: hamperImg.width / 2.2 * scale,
-                height: hamperImg.height / 2.2 * scale
+            dust = {
+                left: 0,
+                top: 170 * scale,
+                width: dustImg.width / 4.4 * scale,
+                height: dustImg.height / 3 * scale
             };
-            hamper.right = hamper.left + hamper.width;
-            hamper.bottom = hamper.top + hamper.height;
-
-            laundry = {
-                left: 620 * scale,
-                top: height - 280 * scale,
-                width: laundryImg.width / 2.5 * scale,
-                height: laundryImg.height / 2.5 * scale
-            };
-            laundry.right = laundry.left + laundry.width;
-            laundry.bottom = laundry.top + laundry.height;
+            dust.right = dust.left + dust.width;
+            dust.bottom = dust.top + 3 * 140 * scale + dust.height;
 
             duster = {
                 x: -60 * scale,
@@ -133,14 +127,14 @@
                 height: dusterImg.height / 3.4 * scale
             };
 
-            dust = {
-                left: 0,
-                top: 170 * scale,
-                width: dustImg.width / 4.4 * scale,
-                height: dustImg.height / 3 * scale
-            };
-            dust.right = dust.left + dust.width;
-            dust.bottom = dust.top + 3 * 140 * scale + dust.height;
+            dusterHuman = {
+                left: width / 1.07,
+                top: 30 * scale,
+                width: dusterHumanImg.width / 5 * scale,
+                height: dusterHumanImg.height / 5 * scale
+            }
+            dusterHuman.right = dusterHuman.left + dusterHuman.width;
+            dusterHuman.bottom = dusterHuman.top + dusterHuman.height;
 
             soda = {
                 left: width - 450 * scale,
@@ -159,6 +153,42 @@
             };
             recyling.right = recyling.left + recyling.width;
             recyling.bottom = recyling.top + recyling.height;
+
+            recycleHuman = {
+                left: width / 1.07,
+                top: 180 * scale,
+                width: recycleHumanImg.width / 5 * scale,
+                height: recycleHumanImg.height / 5 * scale
+            }
+            recycleHuman.right = recycleHuman.left + recycleHuman.width;
+            recycleHuman.bottom = recycleHuman.top + recycleHuman.height;
+
+            laundry = {
+                left: 620 * scale,
+                top: height - 280 * scale,
+                width: laundryImg.width / 2.5 * scale,
+                height: laundryImg.height / 2.5 * scale
+            };
+            laundry.right = laundry.left + laundry.width;
+            laundry.bottom = laundry.top + laundry.height;
+
+            hamper = {
+                left: 50 * scale,
+                top: height - 210 * scale,
+                width: hamperImg.width / 2.2 * scale,
+                height: hamperImg.height / 2.2 * scale
+            };
+            hamper.right = hamper.left + hamper.width;
+            hamper.bottom = hamper.top + hamper.height;
+
+            hamperHuman = {
+                left: width / 1.07,
+                top: 330 * scale,
+                width: hamperHumanImg.width / 5 * scale,
+                height: hamperHumanImg.height / 5 * scale
+            }
+            hamperHuman.right = hamperHuman.left + hamperHuman.width;
+            hamperHuman.bottom = hamperHuman.top + hamperHuman.height;
         }
 
         function draw() {
@@ -197,6 +227,10 @@
                     image(dustImg, -5, dust.top + i * 140 * scale, dust.width, dust.height);
                 }
                 tint('none');
+
+                if (dusterCheck > '0') {
+                    rotateChar(dusterHumanImg, dusterHuman);
+                }
             }
 
             if (recycleCheck != '2') {
@@ -212,6 +246,10 @@
                 }
                 image(sodaImg, soda.left, soda.top, soda.width, soda.height);
                 tint('none');
+
+                if (recycleCheck > '0') {
+                    rotateChar(recycleHumanImg, recycleHuman);
+                }
             }
 
             if (hamperCheck != '2') {
@@ -227,6 +265,10 @@
                 }
                 image(laundryImg, laundry.left, laundry.top, laundry.width, laundry.height);
                 tint('none');
+
+                if (hamperCheck > '0') {
+                    rotateChar(hamperHumanImg, hamperHuman);
+                }
             }
 
             if (tutorialCheck === '-1') {
@@ -285,6 +327,13 @@
             }
         }
 
+        function rotateChar(characterImg, character) {
+            push();
+            translate(character.left + character.width / 2, character.top + character.height / 2);
+            rotate(PI * -.3);
+            image(characterImg, -character.width / 2, -character.height / 2, character.width, character.height);
+            pop();
+        }
         function styledText(string, x, y, size) {
             stroke(0, 0, 0);
             strokeWeight(6);
