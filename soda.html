@@ -42,6 +42,8 @@
         let width;
         let height;
 
+        let missed = false;
+
         // Preload all images
         function preload() {
             sodaImg = loadImage('sprites/enemies/soda.png');
@@ -62,7 +64,7 @@
             canvas = createCanvas(width, height).attribute('id', 'mainCanvas').attribute('willReadFrequently', true);
             canvas.position(canvasX, canvasY);
 
-            calculatePositions()
+            calculatePositions();
 
             mouseX = windowWidth / 2;
             mouseY = windowHeight / 2;
@@ -78,7 +80,7 @@
             height = circus.height * scale;
 
             resizeCanvas(width, height);
-            calculatePositions()
+            calculatePositions();
             canvas.position(canvasX, canvasY);
 
             positionButton();
@@ -186,7 +188,6 @@
                 styledText("to control the recycling bin!", width / 2, height / 1.71, 80);
                 document.getElementById("start").style.display = "block";
                 document.getElementById("returnButton").style.display = "none";
-
             }
             else {
                 document.getElementById("start").style.display = "none";
@@ -244,6 +245,10 @@
                     image(recycleImg, recycle.left, recycle.top, recycle.width, recycle.height);
 
                     sodas.forEach(soda => {
+                        if (missed) {
+                            styledText("Whoops!", width / 2.7, height / 2.45, 30);
+                            styledText("Missed one!", width / 2.7, height / 2.2, 30);
+                        }
 
                         // just getting launched out of cannon - spawn on the cannon hole
                         if (soda.launched == 0) {
@@ -277,6 +282,7 @@
                             checkLanding(soda);
                             if (soda.top > height) {
                                 soda.launched = -1;
+                                missed = true;
                             }
                         }
 
@@ -312,6 +318,7 @@
                 if (soda.top + soda.height / 2 < recycle.top) {
                     current = sodas.indexOf(soda);
                     sodas.splice(current, 1);
+                    missed = false;
                 }
             }
         }
@@ -329,7 +336,6 @@
                 soda.velocityY = 0;
                 soda.inAir = false;
             }
-
         }
 
         function styledText(string, x, y, size) {
@@ -357,7 +363,7 @@
             if (recycleCheck === '1') {
                 document.getElementById('start').style.display = 'none';
             }
-        };
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
             var returnButton = document.getElementById('returnButton');
